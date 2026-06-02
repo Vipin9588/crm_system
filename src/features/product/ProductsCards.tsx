@@ -1,111 +1,127 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 import {
-    Card,
-    CardAction,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/Components/ui/card"
-import { TrendingUpIcon, TrendingDownIcon } from "lucide-react"
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
 
-export function ProductsCards() {
-    return (
-        <div className=" border border-red-400 grid grid-cols-4 gap-4 p-6">
-            <Card className="@container/card">
-                <CardHeader>
-                    <CardDescription>Total Revenue</CardDescription>
-                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        $1,250.00
-                    </CardTitle>
-                    <CardAction>
-                        <Badge variant="outline">
-                            <TrendingUpIcon
-                            />
-                            +12.5%
-                        </Badge>
-                    </CardAction>
-                </CardHeader>
-                <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                    <div className="line-clamp-1 flex gap-2 font-medium">
-                        Trending up this month{" "}
-                        <TrendingUpIcon className="size-4" />
-                    </div>
-                    <div className="text-muted-foreground">
-                        Visitors for the last 6 months
-                    </div>
-                </CardFooter>
-            </Card>
-            <Card className="@container/card">
-                <CardHeader>
-                    <CardDescription>New Customers</CardDescription>
-                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        1,234
-                    </CardTitle>
-                    <CardAction>
-                        <Badge variant="outline">
-                            <TrendingDownIcon
-                            />
-                            -20%
-                        </Badge>
-                    </CardAction>
-                </CardHeader>
-                <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                    <div className="line-clamp-1 flex gap-2 font-medium">
-                        Down 20% this period{" "}
-                        <TrendingDownIcon className="size-4" />
-                    </div>
-                    <div className="text-muted-foreground">
-                        Acquisition needs attention
-                    </div>
-                </CardFooter>
-            </Card>
-            <Card className="@container/card">
-                <CardHeader>
-                    <CardDescription>Active Accounts</CardDescription>
-                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        45,678
-                    </CardTitle>
-                    <CardAction>
-                        <Badge variant="outline">
-                            <TrendingUpIcon
-                            />
-                            +12.5%
-                        </Badge>
-                    </CardAction>
-                </CardHeader>
-                <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                    <div className="line-clamp-1 flex gap-2 font-medium">
-                        Strong user retention{" "}
-                        <TrendingUpIcon className="size-4" />
-                    </div>
-                    <div className="text-muted-foreground">Engagement exceed targets</div>
-                </CardFooter>
-            </Card>
-            <Card className="@container/card">
-                <CardHeader>
-                    <CardDescription>Growth Rate</CardDescription>
-                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        4.5%
-                    </CardTitle>
-                    <CardAction>
-                        <Badge variant="outline">
-                            <TrendingUpIcon
-                            />
-                            +4.5%
-                        </Badge>
-                    </CardAction>
-                </CardHeader>
-                <CardFooter className="flex-col items-start gap-1.5 text-sm">
-                    <div className="line-clamp-1 flex gap-2 font-medium">
-                        Steady performance increase{" "}
-                        <TrendingUpIcon className="size-4" />
-                    </div>
-                    <div className="text-muted-foreground">Meets growth projections</div>
-                </CardFooter>
-            </Card>
-        </div>
-    )
+import {
+  Package,
+  Boxes,
+  AlertTriangle,
+  TrendingUp,
+} from "lucide-react";
+
+export function ProductCards() {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 p-4">
+      {/* Total Products */}
+      <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <CardHeader>
+          <CardDescription className="text-muted-foreground">
+            Total Products
+          </CardDescription>
+
+          <CardTitle className="text-foreground text-3xl font-bold">
+            1,250
+          </CardTitle>
+
+          <CardAction>
+            <Badge variant="secondary" className="gap-1">
+              <Package className="size-4" />
+              Products
+            </Badge>
+          </CardAction>
+        </CardHeader>
+
+        <CardFooter>
+          <p className="text-muted-foreground text-sm">
+            Products available in catalog
+          </p>
+        </CardFooter>
+      </Card>
+
+      {/* Categories */}
+      <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <CardHeader>
+          <CardDescription className="text-muted-foreground">
+            Categories
+          </CardDescription>
+
+          <CardTitle className="text-foreground text-3xl font-bold">
+            24
+          </CardTitle>
+
+          <CardAction>
+            <Badge variant="secondary" className="gap-1">
+              <Boxes className="size-4" />
+              Active
+            </Badge>
+          </CardAction>
+        </CardHeader>
+
+        <CardFooter>
+          <p className="text-muted-foreground text-sm">
+            Product categories managed
+          </p>
+        </CardFooter>
+      </Card>
+
+      {/* Low Stock */}
+      <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <CardHeader>
+          <CardDescription className="text-muted-foreground">
+            Low Stock
+          </CardDescription>
+
+          <CardTitle className="text-foreground text-3xl font-bold">
+            18
+          </CardTitle>
+
+          <CardAction>
+            <Badge className="bg-warning text-black gap-1">
+              <AlertTriangle className="size-4" />
+              Alert
+            </Badge>
+          </CardAction>
+        </CardHeader>
+
+        <CardFooter>
+          <p className="text-muted-foreground text-sm">
+            Products need restocking
+          </p>
+        </CardFooter>
+      </Card>
+
+      <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <CardHeader>
+          <CardDescription className="text-muted-foreground">
+            Inventory Value
+          </CardDescription>
+
+          <CardTitle className="text-foreground text-3xl font-bold">
+            ₹12.5L
+          </CardTitle>
+
+          <CardAction>
+            <Badge className="bg-success text-white gap-1">
+              <TrendingUp className="size-4" />
+              +8.2%
+            </Badge>
+          </CardAction>
+        </CardHeader>
+
+        <CardFooter>
+          <p className="text-muted-foreground text-sm">
+            Total inventory worth
+          </p>
+        </CardFooter>
+      </Card>
+    </div>
+  );
 }

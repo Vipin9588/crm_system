@@ -17,7 +17,6 @@ import {
 import { Input } from "@/Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import type { FormEvent } from "react";
 
 type formInputType = {
   email: string;
@@ -42,7 +41,7 @@ export function LoginForm({
     console.log("this is the login result", result)
     setFormInput({ email: "", password: "" });
     if (user) {
-      navigate("/dashboard");
+      navigate("/");
     }
   }
 

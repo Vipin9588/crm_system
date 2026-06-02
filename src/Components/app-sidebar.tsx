@@ -1,9 +1,8 @@
 import * as React from "react"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/Components/nav-main"
+import { NavSecondary } from "@/Components/nav-secondary"
+import { NavUser } from "@/Components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +30,7 @@ const data = {
       ),
     },
     {
-      title: "Lifecycle",
+      title: "Products",
       url: "#",
       icon: (
         <ListIcon
@@ -47,7 +46,7 @@ const data = {
       ),
     },
     {
-      title: "Projects",
+      title: "Order",
       url: "#",
       icon: (
         <FolderIcon
@@ -55,71 +54,23 @@ const data = {
       ),
     },
     {
-      title: "Team",
+      title: "Customer",
       url: "#",
       icon: (
         <UsersIcon
         />
       ),
     },
+    {
+      title: "Sales",
+      url: "#",
+      icon: (
+        <UsersIcon
+        />
+      ),
+    }
   ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: (
-        <CameraIcon
-        />
-      ),
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
+
   navSecondary: [
     {
       title: "Settings",
@@ -146,32 +97,7 @@ const data = {
       ),
     },
   ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: (
-        <DatabaseIcon
-        />
-      ),
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: (
-        <FileChartColumnIcon
-        />
-      ),
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: (
-        <FileIcon
-        />
-      ),
-    },
-  ],
+
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -194,7 +120,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

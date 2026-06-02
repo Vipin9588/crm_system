@@ -10,23 +10,25 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "@/features/Dashboard/data.json"
+import { Outlet } from "react-router-dom"
 
-export default function Dashboard() {
+export default function Home() {
     const { user } = useAuth();
     console.log("Dashboard user",)
     return (
-
-        <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                    <SectionCards />
-                    <div className="px-4 lg:px-6">
-                        <ChartAreaInteractive />
-                    </div>
-                    <DataTable data={data} />
-                </div>
-            </div>
-        </div>
-
+        <SidebarProvider
+            style={
+                {
+                    "--sidebar-width": "calc(var(--spacing) * 72)",
+                    "--header-height": "calc(var(--spacing) * 12)",
+                } as React.CSSProperties
+            }
+        >
+            <AppSidebar variant="inset" />
+            <SidebarInset>
+                <SiteHeader />
+                <Outlet />
+            </SidebarInset>
+        </SidebarProvider>
     )
 }

@@ -73,6 +73,7 @@ export default function AuthProvider({ children }: Props) {
 
     // CURRENT USER
     useEffect(() => {
+
         const unsubscribe = onAuthStateChanged(
             auth,
             (currentUser) => {
@@ -83,6 +84,7 @@ export default function AuthProvider({ children }: Props) {
         );
         return unsubscribe;
     }, []);
+
 
     return (
         <AuthContext.Provider

@@ -7,7 +7,7 @@ import { useAuth } from "@/Authcontext/AuthProvider"
 import {
     SidebarInset,
     SidebarProvider,
-} from "@/components/ui/sidebar"
+} from "@/Components/ui/sidebar"
 
 import data from "@/features/Dashboard/data.json"
 import { Outlet } from "react-router-dom"

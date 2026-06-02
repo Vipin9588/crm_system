@@ -7,6 +7,7 @@ import { createBrowserRouter } from "react-router";
 import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
 import path from "path";
+import ProductPage from "@/Components/pages/ProductPage";
 
 const router = createBrowserRouter([
     {
@@ -19,6 +20,9 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Dashboard />
+            }, {
+                path: "products",
+                element: <ProductPage />
             }
         ]
 

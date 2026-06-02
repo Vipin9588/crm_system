@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import { NavMain } from "@/Components/nav-main"
-import { NavSecondary } from "@/Components/nav-secondary"
 import { NavUser } from "@/Components/nav-user"
 import {
   Sidebar,
@@ -11,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/Components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
 
 const data = {
@@ -23,7 +22,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
       icon: (
         <LayoutDashboardIcon
         />
@@ -31,7 +30,7 @@ const data = {
     },
     {
       title: "Products",
-      url: "#",
+      url: "/products",
       icon: (
         <ListIcon
         />
@@ -120,7 +119,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

@@ -1,18 +1,9 @@
-import { AppSidebar } from "@/Components/app-sidebar"
 import { ChartAreaInteractive } from "@/Components/chart-area-interactive"
 import { DataTable } from "@/Components/data-table"
 import { SectionCards } from "@/Components/section-cards"
-import { SiteHeader } from "@/Components/site-header"
-import { useAuth } from "@/Authcontext/AuthProvider"
-import {
-    SidebarInset,
-    SidebarProvider,
-} from "@/components/ui/sidebar"
-
 import data from "@/features/Dashboard/data.json"
 
 export default function Dashboard() {
-    const { user } = useAuth();
     console.log("Dashboard user",)
     return (
 

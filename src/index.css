@@ -49,6 +49,10 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  /* font */
+  --text-sm-font: var(--font-sm);
+  --text-md-font: var(--font-md);
+  --text-lg-font: var(--font-lg);
 }
 
 :root {
@@ -86,6 +90,12 @@
   --danger: oklch(0.65 0.24 27);
 
   --radius: 1rem;
+
+  --font-sm: 14px;
+  --font-md: 22px;
+  --font-lg: 28px;
+
+
 }
 
 .dark {
@@ -120,9 +130,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

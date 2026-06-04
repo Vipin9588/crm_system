@@ -1,75 +1,205 @@
-import { Fragment } from 'react'
-import ProductSize from './ProductSize'
-import { Pattern } from './ProductDropDown'
+import ProductSize from "./ProductSize";
+import { Pattern } from "./ProductDropDown";
 
 export default function ProductAddForm() {
-    return (
-        <section className='grid grid-cols-2'>
-            <form>
-                <fieldset className='border'>
-                    <div>
-                        <legend>General information</legend>
-                        <label htmlFor='name'>Product Name</label>
-                        <input type="text" name='name' id='name' />
-                        <label htmlFor="discription">Product Discription</label>
-                        <textarea name='description' id='discription' />
-                    </div>
-                    <div className='border-2 border-red-400'>
-                        <fieldset className='border'>
-                            <legend>Size</legend>
-                            <h6>Pick Available size</h6>
-                            <ProductSize />
-                        </fieldset>
+  return (
+    <section className="min-h-screen p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-md-font font-semibold">
+            Add New Product
+          </h1>
 
-                        <fieldset className='border'>
-                            <legend>Gender</legend>
-                            <h6>Pick Available Gender</h6>
-                            <div className='flex items-center'>
-                                {
-                                    ["Male", "Female", "Unisex"].map((gender, index) => {
-                                        return <Fragment key={gender + index}>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              className="px-5 py-2 border rounded-md bg-background text-foreground"
+            >
+              Save Draft
+            </button>
 
-                                            <input type="radio" name='gender' value={gender} id={gender} key={index + gender}
-                                                className='accent-primary size-4 ml-2'
-                                            />
-                                            <label className='ml-1' htmlFor={gender}>{gender}</label>
-                                        </Fragment>
-                                    })
-                                }
-                            </div>
-                        </fieldset>
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-md bg-primary text-white "
+            >
+              Add Product
+            </button>
+          </div>
+        </div>
 
-                    </div>
+        <form className="grid lg:grid-cols-[2fr_1fr] gap-6">
+          <div className="space-y-6">
+            <div className="bg-background rounded-md border p-6 shadow-sm">
+              <h2 className="font-bold mb-5">
+                General Information
+              </h2>
 
-                    <fieldset>
-                        <legend>Pricing And Stock</legend>
-                        <div>
-                            {
-                                ["Cost Price", "Sell Price", "Stock", "Discount"].map((name, index) => {
-                                    return <div key={index + name}>
-                                        <label htmlFor={name}>{name}</label>
-                                        <input type="text" name={name} id={name} />
-                                    </div>
-                                })
-                            }
-                        </div>
-                    </fieldset>
+              <div className="space-y-4">
+                <div>
+                  <label className="block mb-2 text-sm-font font-medium">
+                    Product Name
+                  </label>
 
-                    <Pattern />
-                    <div>
-                        <label htmlFor="category">Category</label>
-                        <h6>Product category</h6>
-                        <input type="text" name="category" id='category' />
-                    </div>
-                </fieldset>
-                <fieldset>
+                  <input
+                    type="text"
+                    placeholder="Enter product name"
+                    className="w-full h-11 border bg-background rounded-md px-4"
+                  />
+                </div>
 
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Description
+                  </label>
 
-                </fieldset>
+                  <textarea
+                    rows={5}
+                    placeholder="Enter product description"
+                    className="w-full border rounded-xl bg-background p-4 resize-none"
+                  />
+                </div>
+              </div>
+            
 
-            </form>
-        </section>
-    )
+            {/* Size & Gender */}
+            <div className="p-6 ">
+              <div className="grid md:grid-cols-2 gap-8 ">
+                <div>
+                  <h3 className="font-medium mb-2">Size</h3>
+
+                  <p className="text-sm text-slate-500 mb-4">
+                    Pick Available Size
+                  </p>
+
+                  <ProductSize />
+                </div>
+
+                <div>
+                  <h3 className="font-medium mb-2">Gender</h3>
+
+                  <p className="text-sm text-slate-500 mb-4">
+                    Pick Available Gender
+                  </p>
+
+                  <div className="flex flex-wrap gap-4">
+                    {["Male", "Female", "Unisex"].map((item) => (
+                      <label
+                        key={item}
+                        className="flex items-center gap-2"
+                      >
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={item}
+                          className="accent-green-500"
+                        />
+
+                        {item}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+     </div>
+            {/* Pricing */}
+            <div className="bg-background rounded-md border p-6 shadow-sm">
+              <h2 className="font-semibold mb-5">
+                Pricing & Stock
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-2">
+                    Cost Price
+                  </label>
+
+                  <input
+                    type="number"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-2">
+                    Sell Price
+                  </label>
+
+                  <input
+                    type="number"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-2">
+                    Stock
+                  </label>
+
+                  <input
+                    type="number"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-2">
+                    Discount
+                  </label>
+
+                  <input
+                    type="number"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side */}
+          <div className="space-y-6">
+           
+            
+
+            {/* Category */}
+            <div className="bg-background rounded-md border p-6 shadow-sm">
+              <h2 className="font-semibold mb-5">
+                Upload Image
+              </h2>
+
+              <div className="space-y-4">
+                <Pattern />
+              </div>
+            </div>
+            <div className="bg-background rounded-md border p-6 ">
+               <div>
+                  <label className="block mb-2">
+                    Product Category
+                  </label>
+
+                  <input
+                    type="text"
+                    placeholder="Select category"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="block mb-2">
+                    Brand
+                  </label>
+
+                  <input
+                    type="text"
+                    placeholder="Brand name"
+                    className="w-full h-11 border rounded-md px-4"
+                  />
+                </div>        
+            </div>                
+
+          </div>
+        </form>
+      </div>
+    </section>
+  );
 }
-
-// https://dribbble.com/shots/23726881-SalesSync-Dashboard-Sales-Marketing-Add-Product

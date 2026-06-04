@@ -84,7 +84,7 @@ export default function CustomPieChart({
 
     return (
         <div className="grid ">
-            <h1 className=" text-center p-2 text-md-font">{title}</h1>
+            <h1 className=" text-center p-2 text-md-font font-lighter">{title}</h1>
             <PieChart
                 style={{
                     width: "100%",

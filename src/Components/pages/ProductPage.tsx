@@ -1,6 +1,6 @@
 import { ProductCards } from '@/features/product/ProductsCards'
 import CustomPieChart from '@/Components/chart/PieChart'
-import CustomShapeBarChart from '../chart/BarChart'
+import { ReusableAreaChart } from '../chart/AreaChart'
 import Product, { type productProps } from '@/features/product/Product';
 import ProductListHeader from '@/features/product/ProductListHeader';
 export default function ProductPage() {
@@ -80,21 +80,55 @@ export default function ProductPage() {
         },
     ];
 
-    const colors = ["red", "green", "blue", "pink", "yellow"]
+    const revenueData = [
+        { month: "Jan", revenue: 4000 },
+        { month: "Feb", revenue: 3200 },
+        { month: "Mar", revenue: 5100 },
+        { month: "Apr", revenue: 4800 },
+        { month: "May", revenue: 6200 },
+        { month: "Jun", revenue: 5800 },
+        { month: "Jul", revenue: 7100 },
+        { month: "Aug", revenue: 6800 },
+        { month: "Sep", revenue: 7500 },
+        { month: "Oct", revenue: 8200 },
+        { month: "Nov", revenue: 9100 },
+        { month: "Dec", revenue: 10500 },
+    ];
 
+
+    const colors = [
+        "var(--chart-blue)",
+        "var(--chart-orange)",
+        "var(--chart-green)",
+        "var(--chart-red)",
+        "var(--chart-purple)",
+    ];
     return (
         <div>
             <ProductCards />
-            <div className=' grid sm:grid-cols-2 ' >
-                <div className='flex justify-center'>
-                    <CustomPieChart data={data} colors={colors} title='Low Stock Categories' />
+            <div className=' grid  sm:grid-cols-[60%_40%] lg:grid-cols-[65%_35%] gap-2 ' >
+
+                <div className=' flex justify-center p-3'>
+                    <ReusableAreaChart
+                        title="Revenue Trend"
+                        data={revenueData}
+                        xKey="month"
+                        series={[
+                            {
+                                dataKey: "revenue",
+                                color: "var(--chart-blue)",
+                            },
+                        ]}
+                        showGrid={false}
+                    />
+
                 </div>
-                <div className=' flex justify-center'>
-                    <CustomShapeBarChart />
+                <div className='flex justify-center p-3'>
+                    <CustomPieChart data={data} colors={colors} title='Low Stock Categories' />
                 </div>
             </div>
             <ProductListHeader />
-            <div className='p-4  flex flex-col gap-2'>
+            <div className='p-4  flex flex-col gap-2 '>
                 {
                     products.map((product) => {
                         return <Product

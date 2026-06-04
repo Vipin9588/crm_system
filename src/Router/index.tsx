@@ -8,6 +8,7 @@ import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
 import path from "path";
 import ProductPage from "@/Components/pages/ProductPage";
+import ProductAddForm from "@/features/product/ProductAddForm";
 
 const router = createBrowserRouter([
     {
@@ -23,6 +24,9 @@ const router = createBrowserRouter([
             }, {
                 path: "products",
                 element: <ProductPage />
+            }, {
+                path: "addProduct",
+                element: <ProductAddForm />
             }
         ]
 

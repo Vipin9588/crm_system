@@ -9,6 +9,7 @@ import Home from "@/Components/pages/Home";
 import path from "path";
 import ProductPage from "@/Components/pages/ProductPage";
 import ProductAddForm from "@/features/product/ProductAddForm";
+import OrderPage from "@/Components/pages/OrderPage";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
             }, {
                 path: "addProduct",
                 element: <ProductAddForm />
+            },
+            {
+                path: "order",
+                element: <OrderPage />
             }
         ]
 

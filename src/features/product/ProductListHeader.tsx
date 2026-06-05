@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button"
-import Filter from "@/Components/ui/filetr"
+import Filter from "@/Components/ui/filter"
 import { Input } from "@/Components/ui/input"
 import { useNavigate } from "react-router-dom"
 const list = ["Elec", "Plastic", "clothes"]

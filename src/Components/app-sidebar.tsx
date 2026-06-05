@@ -46,7 +46,7 @@ const data = {
     },
     {
       title: "Order",
-      url: "#",
+      url: "/order",
       icon: (
         <FolderIcon
         />

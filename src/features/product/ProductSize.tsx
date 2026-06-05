@@ -5,7 +5,7 @@ export default function ProductSize() {
         <fieldset>
             <legend className="font-medium">Size</legend>
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-3 flex flex-wrap">
                 {["XS", "S", "M", "XL", "XXL"].map((size) => (
                     <label
                         key={size}

@@ -53,6 +53,8 @@
    --text-sm-font: var(--font-sm);
    --text-md-font: var(--font-md);
    --text-lg-font: var(--font-lg);
+   --text-body-font: var(--font-body);
+   --text-
    /* chart */
    --color-chart-blue: var(--chart-blue);
    --color-chart-green: var(--chart-green);
@@ -149,8 +151,10 @@
    /* ===============================
      TYPOGRAPHY
   =============================== */
-   --font-sm: 14px;
-   --font-md: 18px;
+   --font-sm: 14.5px;
+   --font-xsm:12px;
+   --font-md: 15px;
+   --font-body: 16px;
    --font-lg: 28px;
 }
 

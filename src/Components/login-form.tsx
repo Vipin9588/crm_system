@@ -1,49 +1,61 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/Components/ui/button"
-import { useAuth } from "@/Authcontext/AuthProvider"
+import { cn } from "@/lib/utils";
+import { Button } from "@/Components/ui/button";
+import { useAuth } from "@/Authcontext/AuthProvider";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card"
+} from "@/Components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/Components/ui/field"
+} from "@/Components/ui/field";
 import { Input } from "@/Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-
+import { checkNewOrOldUser } from "@/services/authService";
+import { useNotify } from "@/NotifyContext/NotifyContextProvider";
 type formInputType = {
   email: string;
-  password: string
-}
+  password: string;
+};
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [formInput, setFormInput] = useState<formInputType>({ email: "", password: "" })
+  const [formInput, setFormInput] = useState<formInputType>({
+    email: "",
+    password: "",
+  });
   const { googleSignIn, login, user } = useAuth();
-  const navigate = useNavigate()
+  const { toastMessage } = useNotify();
+  const navigate = useNavigate();
   const handleLogin = async () => {
-    await googleSignIn();
-  }
+    try {
+      let result = await googleSignIn();
+      checkNewOrOldUser({
+        credential: result,
+        toastMessage,
+      });
+    } catch (error) {
+      console.error("Error during Google Sign-In:", error);
+    }
+  };
 
-  const loginWithEP = async (e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault()
+  const loginWithEP = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const result = await login(formInput.email, formInput.password);
-    console.log("this is the login result", result)
+    console.log("this is the login result", result);
     setFormInput({ email: "", password: "" });
     if (user) {
       navigate("/");
     }
-  }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -70,7 +82,8 @@ export function LoginForm({
                       ...formInput,
                       email: e.target.value,
                     })
-                  } />
+                  }
+                />
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -82,8 +95,14 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required value={formInput.password}
-                  onChange={(e) => setFormInput({ ...formInput, password: e.target.value })}
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={formInput.password}
+                  onChange={(e) =>
+                    setFormInput({ ...formInput, password: e.target.value })
+                  }
                 />
               </Field>
               <Field>
@@ -92,7 +111,8 @@ export function LoginForm({
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a onClick={() => navigate("/signup")}>Sign up</a>
+                  Don&apos;t have an account?{" "}
+                  <a onClick={() => navigate("/signup")}>Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -100,5 +120,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

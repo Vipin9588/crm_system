@@ -6,18 +6,16 @@ import { RouterProvider } from "react-router-dom";
 import router from './Router';
 import { Toaster } from 'sonner';
 import { TooltipProvider } from "@/Components/ui/tooltip";
-
+import NotifyContextProvider from '@/NotifyContext/NotifyContextProvider';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster toastOptions={{
-          style: {
-            color: "red",
-          },
-        }} />
+    <TooltipProvider >
+      <NotifyContextProvider>
+         <AuthProvider>
+        <Toaster/>
         <RouterProvider router={router} />
       </AuthProvider>
+      </NotifyContextProvider>
     </TooltipProvider>
   </StrictMode>,
 )

@@ -14,10 +14,9 @@ import {
   FieldLabel,
 } from "@/Components/ui/field"
 import { Input } from "@/Components/ui/input"
-import { sign } from "crypto"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Toaster, toast } from 'sonner';
+import {toast } from 'sonner';
 
 type signupType = {
   email: string;
@@ -26,7 +25,7 @@ type signupType = {
 }
 let timeOut: ReturnType<typeof setTimeout>;
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const { signUp } = useAuth()
+  const { signUp,googleSignIn } = useAuth()
 
   const navigate = useNavigate();
   const [signUpInput, setSignupInput] = useState<signupType>({
@@ -59,7 +58,14 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   const handleSignup = (e: React.MouseEvent<HTMLButtonElement>) => {
     passwordVerification(e);
+  }
 
+  const handleGoogleSignup = async() => {
+       try{
+        const result = await googleSignIn();
+       }catch(error){
+         throw error;
+       }
   }
 
 
@@ -114,7 +120,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Field>
 
                 <Button type="submit" onClick={(e) => handleSignup(e)}>Create Account</Button>
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" onClick={handleGoogleSignup}>
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">

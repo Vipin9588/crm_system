@@ -42,6 +42,7 @@ export function LoginForm({
         credential: result,
         toastMessage,
       });
+      navigate("/")
     } catch (error) {
       console.error("Error during Google Sign-In:", error);
     }
@@ -52,9 +53,7 @@ export function LoginForm({
     const result = await login(formInput.email, formInput.password);
     console.log("this is the login result", result);
     setFormInput({ email: "", password: "" });
-    if (user) {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   return (

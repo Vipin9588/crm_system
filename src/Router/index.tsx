@@ -10,6 +10,7 @@ import path from "path";
 import ProductPage from "@/Components/pages/ProductPage";
 import ProductAddForm from "@/features/product/ProductAddForm";
 import OrderPage from "@/Components/pages/OrderPage";
+import Sale from "@/Components/pages/Sale";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +33,9 @@ const router = createBrowserRouter([
             {
                 path: "order",
                 element: <OrderPage />
+            }, {
+                path: "sales",
+                element: <Sale />
             }
         ]
 

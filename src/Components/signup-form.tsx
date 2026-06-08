@@ -12,12 +12,12 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/Components/ui/field"
-import { Input } from "@/Components/ui/input"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import {toast } from 'sonner';
-
+} from "@/Components/ui/field";
+import { Input } from "@/Components/ui/input";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { addUser } from '@/services/authService';
+import { useNotify } from "@/NotifyContext/NotifyContextProvider";
 type signupType = {
   email: string;
   password: string;
@@ -25,49 +25,57 @@ type signupType = {
 }
 let timeOut: ReturnType<typeof setTimeout>;
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const { signUp,googleSignIn } = useAuth()
-
+  const { signUp, googleSignIn } = useAuth()
+  const { toastMessage } = useNotify()
   const navigate = useNavigate();
   const [signUpInput, setSignupInput] = useState<signupType>({
     email: "",
     password: "",
     confirmPassword: ""
   })
+  const userId = `user_${Date.now()}`
 
   const passwordVerification = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     console.log("verification function")
     const { password, confirmPassword, email } = signUpInput;
     if (email !== "" && confirmPassword !== "" && email !== "") {
       if (password.trim() !== confirmPassword.trim()) {
-        toast.error("confirm password should same")
+        toastMessage("confirm password should same", "error")
       }
       else {
-        await signUp(email, confirmPassword);
-        setSignupInput({
-          email: "",
-          password: "",
-          confirmPassword: ""
-        })
+
+        try {
+          await signUp(email, confirmPassword);
+          await addUser({ userId, email, createdAt: Date.now().toString() }, toastMessage);
+          setSignupInput({
+            email: "",
+            password: "",
+            confirmPassword: ""
+          })
+        } catch (error) {
+          throw error
+        }
+
       }
     }
     else {
-      toast("please Enter the details")
+      toastMessage("please Enter the details", "info")
     }
   }
 
   const handleSignup = (e: React.MouseEvent<HTMLButtonElement>) => {
     passwordVerification(e);
   }
-
-  const handleGoogleSignup = async() => {
-       try{
-        const result = await googleSignIn();
-       }catch(error){
-         throw error;
-       }
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await googleSignIn();
+      if (result) navigate("/");
+      toastMessage("signup succesfully", "success")
+    } catch (error) {
+      throw error;
+    }
   }
-
 
   return (
     <Card {...props}>

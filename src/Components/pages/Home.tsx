@@ -3,7 +3,7 @@ import { ChartAreaInteractive } from "@/Components/chart-area-interactive"
 import { DataTable } from "@/Components/data-table"
 import { SectionCards } from "@/Components/section-cards"
 import { SiteHeader } from "@/Components/site-header"
-import { useAuth } from "@/Authcontext/AuthProvider"
+import { useAuth } from "@/Context/Authcontext/AuthProvider"
 import {
     SidebarInset,
     SidebarProvider,

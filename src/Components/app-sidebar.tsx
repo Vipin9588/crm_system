@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/Components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
-import { useAuth } from "@/Authcontext/AuthProvider";
+import { useAuth } from "@/Context/Authcontext/AuthProvider";
 
 const data = {
   user2: {
@@ -101,8 +101,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { logout } = useAuth();
-  // console.log("this is the user data", user)
+  const { logout ,user} = useAuth();
+  console.log("this is the user data", user)
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -124,7 +124,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user2} logout={logout} />
+        {user&&<NavUser user={user} logout={logout} />}
       </SidebarFooter>
     </Sidebar>
   )

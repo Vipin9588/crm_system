@@ -2,7 +2,6 @@ import type { UserCredential } from "firebase/auth";
 import { getAdditionalUserInfo, deleteUser } from "firebase/auth";
 import { doc, setDoc, getDocs, collection } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { captureRejectionSymbol } from "events";
 //check New or old user after google sign in and get the user info
 type MessageType = (message: string, type: "success" | "error" | "info") => void
 
@@ -25,6 +24,7 @@ const checkEmail = (user: userScheme, toastMessage: MessageType) => {
 
 
 
+
 export const checkNewOrOldUser = async ({ credential, toastMessage }: userInfoType): Promise<boolean> => {
    const additionalUserInfo = getAdditionalUserInfo(credential);
    if (additionalUserInfo?.isNewUser) {
@@ -36,11 +36,12 @@ export const checkNewOrOldUser = async ({ credential, toastMessage }: userInfoTy
    return false;
 }
 
-export const addUser = async (user: userScheme, toastMessage: MessageType) => {
-   let result = await setDoc(doc(db, "Users", "jcsbxozSG1WUUTfxif7I44"), user);
+export const addUser = async (user: userScheme, toastMessage: MessageType,credential:UserCredential) => {
+   let result = await setDoc(doc(db, "Users",credential.user.uid ), user);
    toastMessage("signup successfull", "success")
    console.log("result is stored in the firestore = ", result);
 }
+
 
 export const getAllUsers = async () => {
    try {

@@ -18,25 +18,20 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/Components/ui/sidebar"
-import { promises } from "dns"
+import type { User } from "firebase/auth"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 
-type userType = {
-  name: string
-  email: string
-  avatar: string
-}
 
 type logout = () => Promise<void>
 
 type props = {
-  user: userType,
+  user: User,
   logout: logout
 }
 
 export function NavUser({ user, logout }: props) {
   const { isMobile } = useSidebar()
-
+  console.log("user in nav puser is ", user.photoURL);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -47,11 +42,11 @@ export function NavUser({ user, logout }: props) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg" >CN</AvatarFallback>
+                  <AvatarImage src={user?.photoURL ??  ""} alt="" />
+                <AvatarFallback className="rounded-lg" >{user.displayName?.[0]|| "CN"}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user.displayName}</span>
                 <span className="truncate text-xs text-muted-foreground">
                   {user.email}
                 </span>
@@ -68,11 +63,13 @@ export function NavUser({ user, logout }: props) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user?.photoURL ??  ""} alt="" />
+                  <AvatarFallback className="rounded-lg">
+                    {user.displayName?.[0]||"CN"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{user.displayName}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {user.email}
                   </span>

@@ -1,4 +1,4 @@
-import { useAuth } from "@/Authcontext/AuthProvider"
+import { useAuth } from "@/Context/Authcontext/AuthProvider"
 import { Button } from "@/Components/ui/button"
 import {
   Card,
@@ -17,7 +17,8 @@ import { Input } from "@/Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addUser } from '@/services/authService';
-import { useNotify } from "@/NotifyContext/NotifyContextProvider";
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
+import { getAdditionalUserInfo } from "firebase/auth"
 type signupType = {
   email: string;
   password: string;
@@ -34,8 +35,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     confirmPassword: ""
   })
   const userId = `user_${Date.now()}`
-
-  const passwordVerification = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSignup = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("verification function")
     const { password, confirmPassword, email } = signUpInput;
@@ -46,8 +46,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       else {
 
         try {
-          await signUp(email, confirmPassword);
-          await addUser({ userId, email, createdAt: Date.now().toString() }, toastMessage);
+          let credential = await signUp(email, confirmPassword);
+          await addUser({ userId, email, createdAt: Date.now().toString() }, toastMessage, credential);
           setSignupInput({
             email: "",
             password: "",
@@ -64,19 +64,29 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }
   }
 
-  const handleSignup = (e: React.MouseEvent<HTMLButtonElement>) => {
-    passwordVerification(e);
-  }
+
   const handleGoogleSignup = async () => {
     try {
-      const result = await googleSignIn();
-      if (result) navigate("/");
-      toastMessage("signup succesfully", "success")
-    } catch (error) {
-      throw error;
-    }
-  }
+      const credential = await googleSignIn();
 
+      const user = credential.user;
+
+      await addUser(
+        {
+          userId: user.uid,
+          email: user.email ?? "",
+          createdAt: Date.now().toString(),
+        },
+        toastMessage,
+        credential
+      );
+
+      toastMessage("signup successfully", "success");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <Card {...props}>
       <CardHeader>

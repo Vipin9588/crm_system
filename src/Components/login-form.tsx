@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
-import { useAuth } from "@/Authcontext/AuthProvider";
+import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ import { Input } from "@/Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { checkNewOrOldUser } from "@/services/authService";
-import { useNotify } from "@/NotifyContext/NotifyContextProvider";
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
 type formInputType = {
   email: string;
   password: string;

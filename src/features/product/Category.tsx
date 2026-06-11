@@ -1,18 +1,14 @@
 import React from "react";
 
-export default function Category({ ref, categoryList, setFieldValue, setopenDrop }: {
+export default function Category({ categoryList, setFieldValue, setopenDrop }: {
     categoryList: string[] | null,
     setFieldValue: (c: string, v: string) => void
     setopenDrop: React.Dispatch<React.SetStateAction<boolean>>
-    ref: React.RefObject<HTMLOListElement | null>
 }) {
 
-    const close = () => {
-
-    }
 
     return (
-        <ol className="border border-red-400 p-2 absolute z-4 bg-background" ref={ref}>
+        <ol className="absolute mt-2 z-4 bg-background h-[30%] overflow-y-scroll scrollbar-thin w-64"  >
             {
                 categoryList?.map((c, index) => {
                     return <li key={index + c} className="p-1 cursor-pointer" onClick={() => {

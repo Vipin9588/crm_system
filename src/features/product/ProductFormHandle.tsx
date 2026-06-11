@@ -1,4 +1,3 @@
-import { useFormik } from "formik";
 
 export type ProductType = {
     brand: string;
@@ -32,22 +31,5 @@ const initialValues = {
     userId: "",
 }
 
-export default function ProductFormHandle() {
-
-    const ProductFormik = useFormik<ProductType>({
-        initialValues,
-        onSubmit: (values) => {
-            console.log("this is the value --> ", values)
-
-            alert(JSON.stringify(values, null, 2));
-        },
-    });
-
-    const inputFiled = (filed: keyof ProductType) => {
-        return ProductFormik.values[filed]
-    }
-
-    return { ProductFormik, handleChange: ProductFormik.handleChange, inputFiled };
-}
 
 

@@ -1,46 +1,63 @@
-import ProductSize from "./ProductSize";
 import { Pattern } from "./ProductDropDown";
-import ProductFormHandle from "./ProductFormHandle";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Category, { searchCategory } from "./Category";
+import DynamicField from "./Dynamic-form/DynamicField";
+import { categoryConfigs } from "@/config/categoryConfigs"
+import { productCategories } from "@/config/categoryConfigs";
+import { useFormik } from "formik";
+import { productDatatype } from "./productStructer";
 export default function ProductAddForm() {
-  const productCategories: string[] = [
-    "Electronics",
-    "Fashion",
-    "Clothing",
-    "Footwear",
-    "Beauty",
-    "Health",
-    "Books",
-    "Sports",
-    "Toys",
-    "Furniture",
-    "Home Decor",
-    "Kitchen",
-    "Groceries",
-    "Jewelry",
-    "Watches",
-    "Bags",
-    "Automotive",
-    "Mobile Phones",
-    "Laptops",
-    "Gaming",
-    "Pet Supplies",
-    "Office Supplies",
-    "Baby Products",
-    "Garden",
-    "Appliances",
-  ];
-  const { ProductFormik, handleChange, inputFiled } = ProductFormHandle();
+
   const [categoryList, setCategoryList] = useState<string[] | null>([]);
   const [openDrop, setDrop] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
-  const ref = useRef<HTMLOListElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const categorySearch = (e: React.ChangeEvent<HTMLInputElement>, handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
     searchCategory(e, productCategories, setCategoryList, timeoutRef, handleChange);
   }
 
-  
+  const formik = useFormik<productDatatype>({
+    initialValues: {
+      name: "",
+      brand: "",
+      description: "",
+      category: "",
+      costPrice: "",
+      salePrice: "",
+      discount: "",
+      stock: "",
+      image: "",
+      attribute: {
+
+      }
+    },
+    onSubmit: (values, { resetForm }) => {
+      alert(JSON.stringify(values, null, 2));
+      resetForm();
+    },
+  })
+
+
+
+  useEffect(() => {
+
+    const handleCloseDropOutsideClick = (
+      e: MouseEvent,
+    ) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setDrop(false)
+      }
+    };
+
+    document.addEventListener("click", handleCloseDropOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleCloseDropOutsideClick)
+    }
+
+  }, [])
+
+
 
   return (
     <section className="min-h-screen p-6">
@@ -67,10 +84,10 @@ export default function ProductAddForm() {
           </div>
         </div>
 
-        <form className="grid lg:grid-cols-[2fr_1fr] gap-6" onSubmit={ProductFormik.handleSubmit}>
+        <form className="grid lg:grid-cols-[2fr_1fr] gap-6" onSubmit={formik.handleSubmit}>
           <div className="space-y-6">
-            <div className="bg-background rounded-md border p-6 ">
-              <div>
+            <div className="bg-background rounded-md border p-6  flex items-center gap-4">
+              <div ref={ref} className=" w-[50%]">
                 <label className="block mb-2">
                   Product Category
                 </label>
@@ -80,31 +97,32 @@ export default function ProductAddForm() {
                   name="category"
                   placeholder="Select category"
                   className="w-full h-11 border rounded-md px-4 "
-                  value={inputFiled("category")}
+                  value={formik.values.category}
                   onFocus={() => setDrop(true)}
                   onChange={(e) => {
                     categorySearch(
                       e,
-                      handleChange
+                      formik.handleChange
                     )
                   }
                   }
                 />
-                {openDrop && <Category ref={ref} categoryList={categoryList} setopenDrop={setDrop} setFieldValue={ProductFormik.setFieldValue} />}
+                {openDrop && <Category categoryList={categoryList} setopenDrop={setDrop} setFieldValue={formik.setFieldValue} />}
               </div>
 
-              <div className="mt-4">
+              <div className="w-[50%]">
                 <label className="block mb-2">
                   Brand
                 </label>
+
 
                 <input
                   type="text"
                   name="brand"
                   placeholder="Brand name"
                   className="w-full h-11 border rounded-md px-4"
-                  value={inputFiled("brand")}
-                  onChange={handleChange}
+                  value={formik.values.brand}
+                  onChange={formik.handleChange}
                 />
               </div>
 
@@ -126,8 +144,8 @@ export default function ProductAddForm() {
                     name="name"
                     placeholder="Enter product name"
                     className="w-full h-11 border bg-background rounded-md px-4"
-                    onChange={handleChange}
-                    value={inputFiled("name")}
+                    onChange={formik.handleChange}
+                    value={formik.values.name}
                   />
                 </div>
 
@@ -141,54 +159,19 @@ export default function ProductAddForm() {
                     name="description"
                     placeholder="Enter product description"
                     className="w-full border rounded-xl bg-background p-4 resize-none"
-                    value={inputFiled("description")}
-                    onChange={handleChange}
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
 
                   />
                 </div>
               </div>
-
-
-              {/* Size & Gender */}
-              <div className="p-6 ">
-                <div className="grid md:grid-cols-2 gap-8 ">
-                  <div>
-                    <h3 className="font-medium mb-2">Size</h3>
-
-                    <p className="text-sm text-slate-500 mb-4">
-                      Pick Available Size
-                    </p>
-
-                    <ProductSize />
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium mb-2">Gender</h3>
-
-                    <p className="text-sm text-slate-500 mb-4">
-                      Pick Available Gender
-                    </p>
-
-                    <div className="flex flex-wrap gap-4">
-                      {["Male", "Female", "Unisex"].map((item) => (
-                        <label
-                          key={item}
-                          className="flex items-center gap-2"
-                        >
-                          <input
-                            type="radio"
-                            name="gender"
-                            value={item}
-                            className="accent-green-500"
-                          />
-
-                          {item}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {categoryConfigs["Footwear"].map((field) => (
+                <DynamicField
+                  formik={formik}
+                  key={field.id}
+                  field={field}
+                />
+              ))}
             </div>
           </div>
 
@@ -215,8 +198,8 @@ export default function ProductAddForm() {
                   type="number"
                   name="costPrice"
                   className="w-full h-11 border rounded-md px-4"
-                  value={inputFiled("costPrice")}
-                  onChange={handleChange}
+                  value={formik.values.costPrice}
+                  onChange={formik.handleChange}
 
                 />
               </div>
@@ -230,8 +213,8 @@ export default function ProductAddForm() {
                   type="number"
                   name="salePrice"
                   className="w-full h-11 border rounded-md px-4"
-                  value={inputFiled("salePrice")}
-                  onChange={handleChange}
+                  value={formik.values.salePrice}
+                  onChange={formik.handleChange}
                 />
               </div>
 
@@ -244,8 +227,8 @@ export default function ProductAddForm() {
                   type="number"
                   name="stock"
                   className="w-full h-11 border rounded-md px-4"
-                  value={inputFiled("stock")}
-                  onChange={handleChange}
+                  value={formik.values.stock}
+                  onChange={formik.handleChange}
                 />
               </div>
 
@@ -258,8 +241,8 @@ export default function ProductAddForm() {
                   type="number"
                   name="discount"
                   className="w-full h-11 border rounded-md px-4"
-                  value={inputFiled("discount")}
-                  onChange={handleChange}
+                  value={formik.values.discount}
+                  onChange={formik.handleChange}
                 />
               </div>
             </div>

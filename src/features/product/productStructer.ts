@@ -1,3 +1,10 @@
+
+type ImageItem = {
+    file: File;
+    id: string;
+    preview: string;
+};
+
 export type productDatatype = {
     name: string,
     brand: string,
@@ -7,6 +14,6 @@ export type productDatatype = {
     salePrice: string,
     discount: string,
     stock: string,
-    image: string,
+    images: ImageItem[],
     attribute: Record<string, string[] | string>
 }

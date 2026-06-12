@@ -6,10 +6,13 @@ import { categoryConfigs } from "@/config/categoryConfigs"
 import { productCategories } from "@/config/categoryConfigs";
 import { useFormik } from "formik";
 import { productDatatype } from "./productStructer";
+import { file } from "zod";
+import { uploadImageToCloudinary } from "@/services/cloudnairy";
 export default function ProductAddForm() {
 
   const [categoryList, setCategoryList] = useState<string[] | null>([]);
-  const [openDrop, setDrop] = useState(false)
+  const [openDrop, setDrop] = useState(false);
+  const [selectedCategory, setCategory] = useState<string>("Clothing");
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
   const ref = useRef<HTMLDivElement | null>(null);
   const categorySearch = (e: React.ChangeEvent<HTMLInputElement>, handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
@@ -26,15 +29,38 @@ export default function ProductAddForm() {
       salePrice: "",
       discount: "",
       stock: "",
-      image: "",
+      images: [],
       attribute: {
 
       }
     },
-    onSubmit: (values, { resetForm }) => {
-      alert(JSON.stringify(values, null, 2));
-      resetForm();
-    },
+    onSubmit: async (values) => {
+      try {
+        console.log(values);
+
+        const imageUrls = await Promise.all(
+          values.images.map((img) => {
+            console.log("uploading image:", img);
+            return uploadImageToCloudinary(img.file);
+          })
+        );
+
+        console.log("Uploaded URLs:", imageUrls);
+
+        // Save to Firebase here
+        // await addDoc(collection(db, "products"), {
+        //   ...values,
+        //   image: imageUrls,
+        // });
+
+      } catch (error) {
+        console.error("Image upload failed:", error);
+
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    }
   })
 
 
@@ -56,6 +82,7 @@ export default function ProductAddForm() {
     }
 
   }, [])
+
 
 
 
@@ -107,7 +134,7 @@ export default function ProductAddForm() {
                   }
                   }
                 />
-                {openDrop && <Category categoryList={categoryList} setopenDrop={setDrop} setFieldValue={formik.setFieldValue} />}
+                {openDrop && <Category categoryList={categoryList} setCategory={setCategory} setopenDrop={setDrop} setFieldValue={formik.setFieldValue} />}
               </div>
 
               <div className="w-[50%]">
@@ -165,7 +192,7 @@ export default function ProductAddForm() {
                   />
                 </div>
               </div>
-              {categoryConfigs["Footwear"].map((field) => (
+              {categoryConfigs[selectedCategory].map((field) => (
                 <DynamicField
                   formik={formik}
                   key={field.id}
@@ -185,7 +212,10 @@ export default function ProductAddForm() {
               </h2>
 
               <div className="space-y-4">
-                <Pattern />
+                <Pattern onFilesChange={(file) => {
+                  console.log("this is the file uploding message", file)
+                  formik.setFieldValue("images", file)
+                }} />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">

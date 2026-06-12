@@ -17,8 +17,7 @@ export default function SelectField({
                 {field.label}
             </label>
 
-            <Field
-                as="select"
+            <select
                 name={`attribute.${field.id}`}
                 className="w-full border rounded-md p-2"
                 value={formik.values.attribute[field.id]}
@@ -35,7 +34,7 @@ export default function SelectField({
                         {option.label}
                     </option>
                 ))}
-            </Field>
+            </select>
         </div>
     );
 }

@@ -14,7 +14,7 @@ export default function InputField({ field, formik }: Props) {
                 {field.label}
             </label>
 
-            <Field
+            <input
                 name={`attribute.${field.id}`}
                 placeholder={field.placeholder}
                 className="w-full border rounded-md p-2"

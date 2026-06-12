@@ -36,30 +36,6 @@ export function Pattern({
     )
     const [isPreviewLoading, setIsPreviewLoading] = useState(false)
 
-    // Create default images using FileMetadata type
-    const defaultImages: FileMetadata[] = [
-        {
-            id: "default-1",
-            name: "avatar-1.png",
-            size: 44608,
-            type: "image/png",
-            url: "https://picsum.photos/1000/800?random=1",
-        },
-        {
-            id: "default-2",
-            name: "avatar-2.png",
-            size: 42144,
-            type: "image/png",
-            url: "https://picsum.photos/1000/800?random=2",
-        },
-        {
-            id: "default-3",
-            name: "avatar-2.png",
-            size: 42144,
-            type: "image/png",
-            url: "https://picsum.photos/1000/800?random=3",
-        },
-    ]
 
     const [
         { files, isDragging, errors },
@@ -78,7 +54,7 @@ export function Pattern({
         maxSize,
         accept,
         multiple,
-        initialFiles: defaultImages,
+        initialFiles: [],
         onFilesChange,
     })
 
@@ -125,7 +101,11 @@ export function Pattern({
                         </p>
                     </div>
 
-                    <Button onClick={openFileDialog}>
+                    <Button onClick={(e) => {
+                        e.preventDefault();
+                        openFileDialog();
+                    }
+                    }>
                         <UploadIcon className="h-4 w-4" />
                         Select images
                     </Button>

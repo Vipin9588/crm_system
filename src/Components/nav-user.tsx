@@ -31,7 +31,6 @@ type props = {
 
 export function NavUser({ user, logout }: props) {
   const { isMobile } = useSidebar()
-  console.log("user in nav puser is ", user.photoURL);
   return (
     <SidebarMenu>
       <SidebarMenuItem>

@@ -1,15 +1,21 @@
-import { Pattern } from "./ProductDropDown";
-import React, { useEffect, useRef, useState } from "react";
+import { FilesUpload } from "./ProductDropDown";
+import { useEffect, useRef, useState } from "react";
 import Category, { searchCategory } from "./Category";
 import DynamicField from "./Dynamic-form/DynamicField";
 import { categoryConfigs } from "@/config/categoryConfigs"
 import { productCategories } from "@/config/categoryConfigs";
 import { useFormik } from "formik";
 import { productDatatype } from "./productStructer";
-import { file } from "zod";
 import { uploadImageToCloudinary } from "@/services/cloudnairy";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/config/firebase"
+import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { tr } from "zod/v4/locales";
 export default function ProductAddForm() {
-
+  const {user} = useAuth();
+  const  userId = user?.uid;
+  const FilesUploadRef = useRef<{ clearFiles: () => void }>(null);
+  const [loding,setLoding] = useState<boolean>(false)
   const [categoryList, setCategoryList] = useState<string[] | null>([]);
   const [openDrop, setDrop] = useState(false);
   const [selectedCategory, setCategory] = useState<string>("Clothing");
@@ -18,7 +24,7 @@ export default function ProductAddForm() {
   const categorySearch = (e: React.ChangeEvent<HTMLInputElement>, handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
     searchCategory(e, productCategories, setCategoryList, timeoutRef, handleChange);
   }
-
+ 
   const formik = useFormik<productDatatype>({
     initialValues: {
       name: "",
@@ -34,32 +40,27 @@ export default function ProductAddForm() {
 
       }
     },
-    onSubmit: async (values) => {
+    onSubmit: async (values,{resetForm}) => {
+      setLoding(true)
       try {
-        console.log(values);
-
         const imageUrls = await Promise.all(
           values.images.map((img) => {
-            console.log("uploading image:", img);
             return uploadImageToCloudinary(img.file);
           })
         );
 
-        console.log("Uploaded URLs:", imageUrls);
-
-        // Save to Firebase here
-        // await addDoc(collection(db, "products"), {
-        //   ...values,
-        //   image: imageUrls,
-        // });
+        const finalValues = { ...values,userId, images: imageUrls }
+        await addDoc(collection(db, "Products"), finalValues);
+        FilesUploadRef.current?.clearFiles()
 
       } catch (error) {
         console.error("Image upload failed:", error);
-
         if (error instanceof Error) {
           console.error(error.message);
         }
       }
+      setLoding(false);
+      resetForm()
     }
   })
 
@@ -89,7 +90,10 @@ export default function ProductAddForm() {
   return (
     <section className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
+        
+        <form  onSubmit={formik.handleSubmit}>
+
+         <div className="flex items-center justify-between mb-4">
           <h1 className="text-md-font font-semibold">
             Add New Product
           </h1>
@@ -104,14 +108,16 @@ export default function ProductAddForm() {
 
             <button
               type="submit"
-              className="px-5 py-2 rounded-md bg-primary text-white "
+              className={`px-5 py-2 rounded-md ${loding?"bg-blue-300":"bg-primary"} text-white `}
+              disabled = {loding?true:false}
             >
-              Add Product
+              {loding?"Adding...":"Add Product"}
             </button>
           </div>
         </div>
 
-        <form className="grid lg:grid-cols-[2fr_1fr] gap-6" onSubmit={formik.handleSubmit}>
+
+          <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
           <div className="space-y-6">
             <div className="bg-background rounded-md border p-6  flex items-center gap-4">
               <div ref={ref} className=" w-[50%]">
@@ -154,7 +160,7 @@ export default function ProductAddForm() {
               </div>
 
             </div>
-            {/* Pricing */}
+
             <div className="bg-background rounded-md border p-6 shadow-sm">
               <h2 className="font-bold mb-5">
                 General Information
@@ -212,7 +218,10 @@ export default function ProductAddForm() {
               </h2>
 
               <div className="space-y-4">
-                <Pattern onFilesChange={(file) => {
+                <FilesUpload 
+                  ref={FilesUploadRef}
+                  
+                  onFilesChange={(file) => {
                   console.log("this is the file uploding message", file)
                   formik.setFieldValue("images", file)
                 }} />
@@ -277,7 +286,7 @@ export default function ProductAddForm() {
               </div>
             </div>
           </div>
-          <button type="submit">submit</button>
+         </div>
         </form>
       </div>
     </section>

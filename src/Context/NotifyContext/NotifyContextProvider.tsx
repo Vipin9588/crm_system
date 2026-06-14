@@ -1,4 +1,4 @@
-import React , {createContext } from "react";
+import  {createContext, useContext } from "react";
 import {  toast } from 'sonner';
 type notifyContextType = {
     toastMessage:(message: string, type: "success" | "error" | "info")=> void;
@@ -31,7 +31,7 @@ export default function NotifyContextProvider ({children}:{children:React.ReactN
 }
 
 export const useNotify = () => {
-    const context = React.useContext(NotifyContext);
+    const context = useContext(NotifyContext);
     if (!context) {
         throw new Error("useNotify must be used within a NotifyContextProvider");
     }

@@ -10,7 +10,6 @@ type childrenProps = {
 
 export default function ProtectedRoute({ children }: childrenProps) {
     const { user, loading } = useAuth()
-    console.log("this is protected route ", user)
     if (loading) {
         return <div className="h-[100vh] flex justify-center items-center"><Spinner /></div>
     }

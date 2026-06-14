@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState ,forwardRef,useImperativeHandle, useEffect} from "react"
 import {
     formatBytes,
     useFileUpload,
@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/Components/ui/button"
 import { Spinner } from "@/Components/ui/spinner"
 import { ImageIcon, UploadIcon, XIcon, ZoomInIcon } from 'lucide-react'
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider"
+import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers"
 
 interface GalleryUploadProps {
     maxFiles?: number
@@ -22,21 +24,22 @@ interface GalleryUploadProps {
     onFilesChange?: (files: FileWithPreview[]) => void
 }
 
-export function Pattern({
-    maxFiles = 10,
+type FilesUploadRef={clearFiles: () => void}
+
+export const  FilesUpload  = forwardRef<FilesUploadRef,GalleryUploadProps> ((
+    {maxFiles = 10,
     maxSize = 5 * 1024 * 1024, // 5MB
     accept = "image/*",
     multiple = true,
     className,
-    onFilesChange,
-}: GalleryUploadProps) {
+    onFilesChange }
+    ,ref
+) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null)
-    const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
-        {}
-    )
+    const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({})
     const [isPreviewLoading, setIsPreviewLoading] = useState(false)
-
-
+    const {toastMessage} =  useNotify()
+     
     const [
         { files, isDragging, errors },
         {
@@ -58,10 +61,23 @@ export function Pattern({
         onFilesChange,
     })
 
+    useImperativeHandle(ref, () => ({
+     clearFiles,
+   }));
+
     const isImage = (file: File | FileMetadata) => {
         const type = file instanceof File ? file.type : file.type
         return type.startsWith("image/")
     }
+
+ useEffect(() => {
+  const uniqueErrors = [...new Set(errors)];
+
+  uniqueErrors.forEach((error) => {
+    toastMessage(error, "error");
+  });
+}, [errors]);
+
 
     return (
         <div className={cn("w-full max-w-4xl", className)}>
@@ -215,3 +231,4 @@ export function Pattern({
         </div>
     )
 }
+)

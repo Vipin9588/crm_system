@@ -1,6 +1,7 @@
 import type React from "react"
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type ChangeEvent,
@@ -70,7 +71,8 @@ export const useFileUpload = (
     onFilesAdded,
     onError,
   } = options
-
+   
+   
   const [state, setState] = useState<FileUploadState>({
     files: initialFiles.map((file) => ({
       file,
@@ -82,6 +84,10 @@ export const useFileUpload = (
   })
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    onFilesChange?.(state.files);
+  }, [state.files]);
 
   const validateFile = useCallback(
     (file: File | FileMetadata): string | null => {
@@ -161,7 +167,6 @@ export const useFileUpload = (
         errors: [],
       }
 
-      onFilesChange?.(newState.files)
       return newState
     })
   }, [onFilesChange])
@@ -241,7 +246,7 @@ export const useFileUpload = (
           const newFiles = !multiple
             ? validFiles
             : [...prev.files, ...validFiles]
-          onFilesChange?.(newFiles)
+
           return {
             ...prev,
             files: newFiles,
@@ -289,7 +294,6 @@ export const useFileUpload = (
         }
 
         const newFiles = prev.files.filter((file) => file.id !== id)
-        onFilesChange?.(newFiles)
 
         return {
           ...prev,

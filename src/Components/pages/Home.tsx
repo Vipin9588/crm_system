@@ -14,7 +14,6 @@ import { Outlet } from "react-router-dom"
 
 export default function Home() {
     const { user } = useAuth();
-    console.log("Dashboard user",)
     return (
         <SidebarProvider
             style={

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState ,forwardRef,useImperativeHandle, useEffect} from "react"
+import { useState, forwardRef, useImperativeHandle, useEffect } from "react"
 import {
     formatBytes,
     useFileUpload,
@@ -24,22 +24,22 @@ interface GalleryUploadProps {
     onFilesChange?: (files: FileWithPreview[]) => void
 }
 
-type FilesUploadRef={clearFiles: () => void}
+type FilesUploadRef = { clearFiles: () => void }
 
-export const  FilesUpload  = forwardRef<FilesUploadRef,GalleryUploadProps> ((
-    {maxFiles = 10,
-    maxSize = 5 * 1024 * 1024, // 5MB
-    accept = "image/*",
-    multiple = true,
-    className,
-    onFilesChange }
-    ,ref
+export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
+    { maxFiles = 10,
+        maxSize = 5 * 1024 * 1024, // 5MB
+        accept = "image/*",
+        multiple = true,
+        className,
+        onFilesChange }
+    , ref
 ) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null)
     const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({})
     const [isPreviewLoading, setIsPreviewLoading] = useState(false)
-    const {toastMessage} =  useNotify()
-     
+    const { toastMessage } = useNotify()
+
     const [
         { files, isDragging, errors },
         {
@@ -62,21 +62,21 @@ export const  FilesUpload  = forwardRef<FilesUploadRef,GalleryUploadProps> ((
     })
 
     useImperativeHandle(ref, () => ({
-     clearFiles,
-   }));
+        clearFiles,
+    }));
 
     const isImage = (file: File | FileMetadata) => {
         const type = file instanceof File ? file.type : file.type
         return type.startsWith("image/")
     }
 
- useEffect(() => {
-  const uniqueErrors = [...new Set(errors)];
+    useEffect(() => {
+        const uniqueErrors = [...new Set(errors)];
 
-  uniqueErrors.forEach((error) => {
-    toastMessage(error, "error");
-  });
-}, [errors]);
+        uniqueErrors.forEach((error) => {
+            toastMessage(error, "error");
+        });
+    }, [errors]);
 
 
     return (

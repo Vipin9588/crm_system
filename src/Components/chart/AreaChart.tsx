@@ -1,78 +1,91 @@
 import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
 } from "recharts";
 
-type SeriesConfig = {
-    dataKey: string;
-    color: string;
-};
+const monthlyProductsAdded = [
+  {
+    month: "Jan",
+    productsAdded: 18,
+  },
+  {
+    month: "Feb",
+    productsAdded: 24,
+  },
+  {
+    month: "Mar",
+    productsAdded: 31,
+  },
+  {
+    month: "Apr",
+    productsAdded: 27,
+  },
+  {
+    month: "May",
+    productsAdded: 42,
+  },
+  {
+    month: "Jun",
+    productsAdded: 38,
+  },
+  {
+    month: "Jul",
+    productsAdded: 46,
+  },
+  {
+    month: "Aug",
+    productsAdded: 53,
+  },
+  {
+    month: "Sep",
+    productsAdded: 49,
+  },
+  {
+    month: "Oct",
+    productsAdded: 61,
+  },
+  {
+    month: "Nov",
+    productsAdded: 58,
+  },
+  {
+    month: "Dec",
+    productsAdded: 72,
+  },
+];
 
-type ReusableAreaChartProps<T> = {
-    title?: string;
-    data: T[];
-    xKey: keyof T;
-    series: SeriesConfig[];
-    showGrid?: boolean;
-};
+export default function ReusableLineChart() {
+  return (
+    <ResponsiveContainer width="100%" height={350}>
+      <LineChart data={monthlyProductsAdded}>
+        <XAxis
+          dataKey="month"
+          axisLine={false}
+          tickLine={false}
+        />
 
-export function ReusableAreaChart<
-    T extends Record<string, unknown>
->({
-    title,
-    data,
-    xKey,
-    series,
-    showGrid = true,
-}: ReusableAreaChartProps<T>) {
-    return (
-        <div className="w-full">
-            {title && (
-                <h2 className="mb-4 text-center text-lg font-medium">
-                    {title}
-                </h2>
-            )}
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+        />
 
-            <ResponsiveContainer
-                width="100%"
-                height={400}
-            >
-                <AreaChart
-                    data={data}
-                    margin={{
-                        top: 20,
-                        right: 20,
-                        left: 0,
-                        bottom: 0,
-                    }}
-                >
-                    {showGrid && (
-                        <CartesianGrid strokeDasharray="3 3" />
-                    )}
+        <Tooltip />
 
-                    <XAxis dataKey={String(xKey)} />
+        <Legend />
 
-                    <YAxis width="auto" />
-
-                    <Tooltip />
-
-                    {series.map((item) => (
-                        <Area
-                            key={item.dataKey}
-                            type="monotone"
-                            dataKey={item.dataKey}
-                            stroke={item.color}
-                            fill={item.color}
-                            fillOpacity={0.3}
-                        />
-                    ))}
-                </AreaChart>
-            </ResponsiveContainer>
-        </div>
-    );
+        <Line
+          type="linear"
+          dataKey="productsAdded"
+          stroke="var(--chart-blue)"
+          strokeWidth={5}
+          dot={false}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
 }

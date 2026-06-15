@@ -11,6 +11,7 @@ import ProductPage from "@/Components/pages/ProductPage";
 import ProductAddForm from "@/features/product/ProductAddForm";
 import OrderPage from "@/Components/pages/OrderPage";
 import Sale from "@/Components/pages/Sale";
+import CRMCustomerManagement from "@/Components/pages/Customer";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             }, {
                 path: "sales",
                 element: <Sale />
+            },
+            {
+                path: "customer",
+                element: <CRMCustomerManagement/>
             }
         ]
 

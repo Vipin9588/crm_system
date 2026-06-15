@@ -3,6 +3,7 @@ import OrderListCard from "@/features/Order/OrderListCard";
 import OrderSummaryCard from "@/features/Order/OrderSummaryCard";
 import { useState } from "react";
 import type { OrderObject } from "@/features/Order/OrderListCard";
+import OrderTable from "@/features/Order/OrderListCard";
 export default function OrderPage() {
   const orders = [
     {
@@ -112,7 +113,7 @@ export default function OrderPage() {
       <div
         className={`transition-all duration-300 w-full `}
       >
-        <OrderListCard
+        <OrderTable
           orderList={orders}
           setOrderSummary={setOrderSummary}
           setOpenSummary={setOpenSummary}
@@ -134,4 +135,3 @@ export default function OrderPage() {
   );
 }
 
-// https://webflow.com/templates/search-v2?q=dashboard

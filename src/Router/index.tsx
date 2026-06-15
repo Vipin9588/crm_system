@@ -1,14 +1,11 @@
 import Login from "@/Components/Auth/Login";
 import Signup from "@/Components/Auth/SignUp";
 import Dashboard from "@/features/Dashboard/Dashboard";
-import React from "react";
-import ReactDOM from "react-dom/client";
 import { createBrowserRouter } from "react-router";
 import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
-import path from "path";
-import ProductPage from "@/Components/pages/ProductPage";
-import ProductAddForm from "@/features/product/ProductAddForm";
+import ProductPage from "@/features/product/index";
+import ProductAddForm from "@/features/product/component/ProductAddForm";
 import OrderPage from "@/Components/pages/OrderPage";
 import Sale from "@/Components/pages/Sale";
 import CRMCustomerManagement from "@/Components/pages/Customer";
@@ -40,7 +37,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "customer",
-                element: <CRMCustomerManagement/>
+                element: <CRMCustomerManagement />
             }
         ]
 

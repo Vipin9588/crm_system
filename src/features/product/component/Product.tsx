@@ -1,3 +1,4 @@
+
 type ProductStatus =
     | "In Stock"
     | "Low Stock"
@@ -7,8 +8,8 @@ export type productProps = {
     img: string,
     name: string,
     brand: string,
-    cost: number,
-    price: number,
+    cost: string,
+    price: string,
     status: ProductStatus;
 }
 export default function Product({
@@ -53,8 +54,8 @@ export default function Product({
             </div>
 
             <span
-                className={`rounded-full px-3 py-1 text-xs font-medium
-          ${status === "In Stock"
+                className={`rounded-full px-3 py-1  text-xs font-medium 
+                ${status === "In Stock"
                         ? "bg-green-100 text-green-700"
                         : status === "Low Stock"
                             ? "bg-yellow-100 text-yellow-700"

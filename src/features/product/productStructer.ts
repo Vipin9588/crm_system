@@ -6,6 +6,7 @@ type ImageItem = {
 };
 
 export type productDatatype = {
+    id: string,
     name: string,
     brand: string,
     description: string,

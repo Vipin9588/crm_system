@@ -8,6 +8,7 @@ import { checkStatus } from './api/getProducts';
 import { useAuth } from '@/Context/Authcontext/AuthProvider';
 import { productDatatype } from './productStructer';
 import { search } from './api/search';
+import { DataTable } from '@/Components/data-table';
 export default function ProductPage() {
     const [Products, setProducts] = useState<productDatatype[]>([]);
     const [filter, setFilter] = useState<string | null>(null)
@@ -117,6 +118,8 @@ export default function ProductPage() {
                     })
                 }
             </div>
+
+
         </div>
     )
 }

@@ -1,6 +1,5 @@
 import Login from "@/Components/Auth/Login";
 import Signup from "@/Components/Auth/SignUp";
-import Dashboard from "@/features/Dashboard/Dashboard";
 import { createBrowserRouter } from "react-router";
 import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
@@ -9,6 +8,7 @@ import ProductAddForm from "@/features/product/component/ProductAddForm";
 import OrderPage from "@/Components/pages/OrderPage";
 import Sale from "@/Components/pages/Sale";
 import CRMCustomerManagement from "@/Components/pages/Customer";
+import DemoPage from "@/Components/table/page";
 
 const router = createBrowserRouter([
     {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Dashboard />
+                element: <DemoPage />
             }, {
                 path: "products",
                 element: <ProductPage />

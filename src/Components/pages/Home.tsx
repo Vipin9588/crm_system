@@ -9,7 +9,6 @@ import {
     SidebarProvider,
 } from "@/Components/ui/sidebar"
 
-import data from "@/features/Dashboard/data.json"
 import { Outlet } from "react-router-dom"
 
 export default function Home() {

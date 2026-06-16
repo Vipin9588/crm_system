@@ -394,7 +394,7 @@ export function DataTable({
   return (
     <Tabs
       defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
+      className=" w-full flex-col justify-start gap-6"
     >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Label htmlFor="view-selector" className="sr-only">
@@ -489,9 +489,9 @@ export function DataTable({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       )
                     })}
@@ -522,7 +522,7 @@ export function DataTable({
             </Table>
           </DndContext>
         </div>
-        <div className="flex items-center justify-between px-4">
+        <div id="pagination" className="border border-red-400 flex items-center justify-between px-4">
           <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.

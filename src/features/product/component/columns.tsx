@@ -1,0 +1,83 @@
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "@/Components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import type { productDatatype } from "../productStructer";
+
+export const getColumns = (): ColumnDef<productDatatype>[] => [
+    {
+        accessorKey: "images",
+        header: "Image",
+        cell: ({ row }) => {
+            const image = row.original.images?.[0];
+            const imageSrc = typeof image === "string" ? image : image?.preview;
+
+            return imageSrc ? (
+                <img
+                    src={imageSrc}
+                    alt={row.original.name}
+                    className="h-12 w-12 rounded-md object-cover"
+                />
+            ) : (
+                <div className="h-12 w-12 rounded-md bg-muted" />
+            );
+        },
+    },
+    {
+        accessorKey: "name",
+        header: "Product Name",
+    },
+    {
+        accessorKey: "brand",
+        header: "Brand",
+    },
+    {
+        accessorKey: "costPrice",
+        header: "Cost",
+    },
+    {
+        accessorKey: "salePrice",
+        header: "Price",
+    },
+    {
+        id: "actions",
+        cell: ({ row }) => {
+            const product = row.original;
+
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+                        <DropdownMenuItem
+                            onClick={() =>
+                                navigator.clipboard.writeText(product.name)
+                            }
+                        >
+                            Copy Name
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
+    },
+];

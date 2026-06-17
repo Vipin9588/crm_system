@@ -1,36 +1,39 @@
 import { ProductCards } from '@/features/product/component/ProductsCards'
 import CustomPieChart from '@/Components/chart/PieChart'
 import ReusableLineChart from '@/Components/chart/AreaChart'
-import Product, { type productProps } from '@/features/product/component/Product';
 import ProductListHeader from '@/features/product/component/ProductListHeader';
 import { useEffect, useRef, useState } from 'react';
-import { checkStatus } from './api/getProducts';
 import { useAuth } from '@/Context/Authcontext/AuthProvider';
 import { productDatatype } from './productStructer';
 import { search } from './api/search';
-import { DataTable } from '@/Components/data-table';
+import { DataTable } from '@/Components/table/data-table';
+import { getColumns } from './component/columns';
 export default function ProductPage() {
     const [Products, setProducts] = useState<productDatatype[]>([]);
     const [filter, setFilter] = useState<string | null>(null)
     const { user } = useAuth();
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const column = getColumns();
 
-    if (!user) return;
     useEffect(() => {
+        if (!user) return;
+
         (async () => {
             if (filter !== null) {
                 const p = await search(user.uid, filter)
                 setProducts(p);
+
             } else {
                 const p = await search(user.uid)
                 setProducts(p)
             }
         })()
-    }, [filter])
-
+    }, [filter, user])
 
 
     const productSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!user) return;
+
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
@@ -80,6 +83,9 @@ export default function ProductPage() {
         "var(--chart-red)",
         "var(--chart-purple)",
     ];
+
+    if (!user) return null;
+
     return (
         <div>
             <ProductCards />
@@ -102,9 +108,9 @@ export default function ProductPage() {
                     />
                 </div>
             </div>
-            <ProductListHeader productSearch={productSearch} setFilter={setFilter} />
+            {/* <ProductListHeader productSearch={productSearch} setFilter={setFilter} /> */}
             <div className='p-4  flex flex-col gap-2 '>
-                {
+                {/* {
                     Products.map((product, index) => {
                         return <Product
                             key={product.name + index}
@@ -116,7 +122,10 @@ export default function ProductPage() {
                             status={checkStatus(Number(product.stock))}
                         />
                     })
-                }
+                } */}
+
+                <DataTable columns={column} data={Products} />
+
             </div>
 
 

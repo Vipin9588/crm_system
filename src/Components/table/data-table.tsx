@@ -8,7 +8,6 @@ import {
     getCoreRowModel,
     getPaginationRowModel,
     getFilteredRowModel,
-    ColumnFiltersState,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
@@ -35,9 +34,7 @@ export function DataTable<TData, TValue>({
     data,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
+    const [globalFilter, setGlobalFilter] = React.useState("");
 
     const table = useReactTable({
         data,
@@ -46,22 +43,23 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
         getFilteredRowModel: getFilteredRowModel(),
         initialState: {
             pagination: {
-                pageSize: 5,
+                pageSize: 10,
             },
         },
         state: {
             sorting,
-            columnFilters,
+            globalFilter,
         },
     })
 
     const currentPage = table.getState().pagination.pageIndex + 1;
     const totalPages = table.getPageCount();
     const pages = getPageNumbers(currentPage, totalPages);
+
 
     function getPageNumbers(currentPage: number, totalPages: number) {
         const pages: (number | string)[] = [];
@@ -92,15 +90,22 @@ export function DataTable<TData, TValue>({
         return pages;
     }
 
+    const search = () => {
+        table.getAllColumns().map((c) => {
+            console.log(c.id)
+        })
+    }
+
+    search()
+
+
     return (
         <div>
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
-                    }
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
                     className="max-w-sm"
                 />
             </div>
@@ -163,10 +168,14 @@ export function DataTable<TData, TValue>({
                                 <span key={index}>...</span>
                             ) : (
                                 <Button
-                                    key={page}
+                                    key={`page-${page}`}
                                     size="sm"
                                     variant={currentPage === page ? "default" : "outline"}
-                                    onClick={() => table.setPageIndex(page - 1)}
+                                    onClick={() => {
+                                        if (typeof page === "number") {
+                                            table.setPageIndex(page - 1)
+                                        }
+                                    }}
                                 >
                                     {page}
                                 </Button>

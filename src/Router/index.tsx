@@ -5,7 +5,7 @@ import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
 import ProductPage from "@/features/product/index";
 import ProductAddForm from "@/features/product/component/ProductAddForm";
-import OrderPage from "@/Components/pages/OrderPage";
+import OrderPage from "@/features/Order/index";
 import Sale from "@/Components/pages/Sale";
 import CRMCustomerManagement from "@/Components/pages/Customer";
 import DemoPage from "@/Components/table/page";

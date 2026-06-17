@@ -4,6 +4,7 @@ import * as React from "react"
 import {
     ColumnDef,
     SortingState,
+    ColumnFiltersState,
     flexRender,
     getCoreRowModel,
     getPaginationRowModel,
@@ -33,28 +34,36 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [globalFilter, setGlobalFilter] = React.useState("");
+  const [sorting, setSorting] = React.useState<SortingState>([])
+const [globalFilter, setGlobalFilter] = React.useState("")
+const [columnFilters, setColumnFilters] =
+    React.useState<ColumnFiltersState>([])
 
     const table = useReactTable({
-        data,
-        columns,
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        onGlobalFilterChange: setGlobalFilter,
-        getFilteredRowModel: getFilteredRowModel(),
-        initialState: {
-            pagination: {
-                pageSize: 10,
-            },
+    data,
+    columns,
+
+    state: {
+        sorting,
+        globalFilter,
+        columnFilters,
+    },
+
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
+
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+
+    initialState: {
+        pagination: {
+            pageSize: 10,
         },
-        state: {
-            sorting,
-            globalFilter,
-        },
-    })
+    },
+})
 
     const currentPage = table.getState().pagination.pageIndex + 1;
     const totalPages = table.getPageCount();
@@ -90,25 +99,35 @@ export function DataTable<TData, TValue>({
         return pages;
     }
 
-    const search = () => {
-        table.getAllColumns().map((c) => {
-            console.log(c.id)
-        })
-    }
-
-    search()
-
 
     return (
         <div>
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filter emails..."
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    className="max-w-sm"
-                />
-            </div>
+            <div className="flex items-center justify-between gap-4 py-4">
+    <Input
+        placeholder="Search..."
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className="max-w-sm"
+    />
+
+    <select
+        className="border bg-background rounded-md  py-1 px-1"
+        value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
+        onChange={(e) =>
+            table
+                .getColumn("status")
+                ?.setFilterValue(
+                    e.target.value || undefined
+                )
+        }
+    >
+        <option value="">All Status</option>
+        <option value="Completed">Completed</option>
+        <option value="Pending">Pending</option>
+        <option value="Cancelled">Cancelled</option>
+        <option value="Shipped">Shipped</option>
+    </select>
+</div>
             <div className="overflow-hidden rounded-md border">
                 <Table>
                     <TableHeader>

@@ -1,9 +1,11 @@
-import OrderHeader from "@/features/Order/components/OrderHeader";
+import Cards from "@/features/Order/components/Cards";
 import OrderSummaryCard from "@/features/Order/components/OrderSummaryCard";
 import { useState } from "react";
 import type { OrderObject } from "@/features/Order/components/OrderListCard";
 import { DataTable } from "@/Components/table/data-table";
 import { getColumns } from "@/features/Order/components/columns";
+import { BarChart } from "lucide-react";
+import ReusablePieChart from "./components/PieChart";
 export default function OrderPage() {
     const orders = [
         {
@@ -93,6 +95,13 @@ export default function OrderPage() {
         },
     ];
 
+    const data = [
+  { name: "Group A", value: 400 },
+  { name: "Group B", value: 300 },
+  { name: "Group C", value: 200 },
+  { name: "Group D", value: 100 },
+];
+
     const [showOrderSummary, setOrderSummary] = useState<OrderObject | null>(
         null,
     );
@@ -108,17 +117,27 @@ export default function OrderPage() {
                 </div>
             </div>
 
-            <OrderHeader />
+            <div className="grid grid ">
+                <Cards /> 
+                
+                  <div className="p-4">
+                    <ReusablePieChart
+  title="Orders By Group"
+  data={data}
+  nameKey="name"
+  valueKey="value"
+  width="w-[45%]"
+ 
+/>
+                  </div>
+              
+            </div>
+            <hr  className="p-4"/>
             <div className="flex mt-1 overflow-hidden sm:ml-4 sm:mr-4">
                 <div
-                    className={`transition-all duration-300 w-full `}
+                    className={`p-2 w-full `}
                 >
-                    {/* <OrderTable
-              orderList={orders}
-              setOrderSummary={setOrderSummary}
-              setOpenSummary={setOpenSummary}
-            /> */}
-
+                    
                     <DataTable columns={column} data={orders} />
 
                 </div>

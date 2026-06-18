@@ -39,20 +39,12 @@ const cards = [
         badgeClass: "bg-destructive/10 text-destructive",
         iconClass: "text-destructive",
     },
-    {
-        title: "Revenue Growth",
-        value: "+8.2%",
-        description: "Compared to last month",
-        badge: "Growth",
-        icon: TrendingUp,
-        badgeClass: "bg-success/10 text-success",
-        iconClass: "text-success",
-    },
+   
 ];
 
 export default function Cards() {
     return (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {cards.map((card) => {
                 const Icon = card.icon;
                 return (

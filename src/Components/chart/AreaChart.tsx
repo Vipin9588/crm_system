@@ -5,85 +5,83 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+  CartesianGrid,
 } from "recharts";
 
-const monthlyProductsAdded = [
-  {
-    month: "Jan",
-    productsAdded: 18,
-  },
-  {
-    month: "Feb",
-    productsAdded: 24,
-  },
-  {
-    month: "Mar",
-    productsAdded: 31,
-  },
-  {
-    month: "Apr",
-    productsAdded: 27,
-  },
-  {
-    month: "May",
-    productsAdded: 42,
-  },
-  {
-    month: "Jun",
-    productsAdded: 38,
-  },
-  {
-    month: "Jul",
-    productsAdded: 46,
-  },
-  {
-    month: "Aug",
-    productsAdded: 53,
-  },
-  {
-    month: "Sep",
-    productsAdded: 49,
-  },
-  {
-    month: "Oct",
-    productsAdded: 61,
-  },
-  {
-    month: "Nov",
-    productsAdded: 58,
-  },
-  {
-    month: "Dec",
-    productsAdded: 72,
-  },
-];
+export type MonthlyDatum = {
+  month: string;
+  productsAdded: number;
+};
 
-export default function ReusableLineChart() {
+type ProductsAddedChartProps = {
+  data: MonthlyDatum[];
+};
+
+export default function ReusableLineChart({
+  data,
+}: ProductsAddedChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={monthlyProductsAdded}>
+    <ResponsiveContainer width="100%" height={320}>
+      <LineChart
+        data={data}
+        margin={{
+          top: 16,
+          right: 16,
+          left: 0,
+          bottom: 8,
+        }}
+      >
+        <CartesianGrid
+          strokeDasharray="2 2"
+          vertical={false}
+          stroke="#e5e7eb"
+        />
+
         <XAxis
           dataKey="month"
           axisLine={false}
           tickLine={false}
+          tick={{ fontSize: 12, fill: "#6b7280" }}
         />
 
         <YAxis
           axisLine={false}
           tickLine={false}
+          tick={{ fontSize: 12, fill: "#6b7280" }}
+          width={40}
         />
 
-        <Tooltip />
-
-        <Legend />
+        <Tooltip
+          cursor={{
+            stroke: "#3b82f6",
+            strokeDasharray: "4 4",
+          }}
+          contentStyle={{
+            borderRadius: "10px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            fontSize: "13px",
+          }}
+       formatter={(value) => [
+  String(value ?? 0),
+  "Products Added",
+]}
+        />
 
         <Line
-          type="linear"
+          type="monotone"
           dataKey="productsAdded"
-          stroke="var(--chart-blue)"
-          strokeWidth={5}
-          dot={false}
+          name="Products Added"
+          stroke="#3b82f6"
+          strokeWidth={3}
+          dot={{
+            r: 4,
+            fill: "#3b82f6",
+            strokeWidth: 0,
+          }}
+          activeDot={{
+            r: 6,
+          }}
         />
       </LineChart>
     </ResponsiveContainer>

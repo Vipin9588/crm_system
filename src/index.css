@@ -54,7 +54,7 @@
    --text-md-font: var(--font-md);
    --text-lg-font: var(--font-lg);
    --text-body-font: var(--font-body);
-   --text-
+
    /* chart */
    --color-chart-blue: var(--chart-blue);
    --color-chart-green: var(--chart-green);
@@ -158,7 +158,7 @@
    --font-lg: 28px;
 }
 
-:root {
+:root{
    /* ===============================
      BACKGROUND & TEXT
   =============================== */

@@ -14,7 +14,56 @@ export default function ProductPage() {
     const { user } = useAuth();
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const column = getColumns();
-
+const demoData = [
+  {
+    month: "Jan",
+    productsAdded: 45,
+  },
+  {
+    month: "Feb",
+    productsAdded: 62,
+  },
+  {
+    month: "Mar",
+    productsAdded: 78,
+  },
+  {
+    month: "Apr",
+    productsAdded: 55,
+  },
+  {
+    month: "May",
+    productsAdded: 91,
+  },
+  {
+    month: "Jun",
+    productsAdded: 73,
+  },
+  {
+    month: "Jul",
+    productsAdded: 110,
+  },
+  {
+    month: "Aug",
+    productsAdded: 95,
+  },
+  {
+    month: "Sep",
+    productsAdded: 88,
+  },
+  {
+    month: "Oct",
+    productsAdded: 120,
+  },
+  {
+    month: "Nov",
+    productsAdded: 105,
+  },
+  {
+    month: "Dec",
+    productsAdded: 140,
+  },
+];
     useEffect(() => {
         if (!user) return;
 
@@ -89,40 +138,20 @@ export default function ProductPage() {
     return (
         <div>
             <ProductCards />
-            <div className="grid gap-4 lg:grid-cols-[65%_35%]">
-                <div className="p-3">
-                    <ReusableLineChart />
+            <div className="grid gap-4 lg:grid-cols-[64%_34%] p-4">
+                <div className="p-2 border border-accent rounded-md">
+                    <ReusableLineChart data={demoData} />
                 </div>
 
-                <div className="p-3">
+                <div className="p-2 border border-accent rounded-md ">
                     <CustomPieChart
                         title="Products by Category"
                         data={categoryData}
-                        colors={[
-                            "var(--chart-blue)",
-                            "var(--chart-orange)",
-                            "var(--chart-green)",
-                            "var(--chart-red)",
-                            "var(--chart-purple)",
-                        ]}
+                        colors={colors}
                     />
                 </div>
             </div>
-            {/* <ProductListHeader productSearch={productSearch} setFilter={setFilter} /> */}
             <div className='p-4  flex flex-col gap-2 '>
-                {/* {
-                    Products.map((product, index) => {
-                        return <Product
-                            key={product.name + index}
-                            img={String(product.images[0])}
-                            name={product.name}
-                            brand={product.brand}
-                            cost={product.costPrice}
-                            price={product.salePrice}
-                            status={checkStatus(Number(product.stock))}
-                        />
-                    })
-                } */}
 
                 <DataTable columns={column} data={Products} />
 

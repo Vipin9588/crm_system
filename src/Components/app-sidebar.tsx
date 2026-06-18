@@ -55,7 +55,7 @@ const data = {
     },
     {
       title: "Customer",
-      url: "#",
+      url: "/customer",
       icon: (
         <UsersIcon
         />

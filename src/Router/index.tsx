@@ -7,15 +7,16 @@ import ProductPage from "@/features/product/index";
 import ProductAddForm from "@/features/product/component/ProductAddForm";
 import OrderPage from "@/features/Order/index";
 import Sale from "@/Components/pages/Sale";
-import CRMCustomerManagement from "@/Components/pages/Customer";
 import DemoPage from "@/Components/table/page";
+import CustomerPage from "@/features/Customer";
+import AddCustomerForm from "@/features/Customer/components/NewCustomer";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <ProtectedRoute>
-            <Home />
-        </ProtectedRoute>
+                <Home />
+          </ProtectedRoute>
         ,
         children: [
             {
@@ -37,7 +38,10 @@ const router = createBrowserRouter([
             },
             {
                 path: "customer",
-                element: <CRMCustomerManagement />
+                element: <CustomerPage/>
+            },{
+                path:"new/customer",
+                element:<AddCustomerForm/>
             }
         ]
 

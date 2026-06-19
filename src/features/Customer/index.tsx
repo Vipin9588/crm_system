@@ -1,9 +1,11 @@
 import { useState } from "react";
-
 import type { Customer } from "./types";
 import Cards from "./components/Cards";
 import { DataTable } from "@/Components/table/data-table";
 import { getColumns } from "./components/column";
+import CustomerSummary from "./components/CustomerSummary";
+import { IoIosAdd } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 export const customerData = [
   {
@@ -14,7 +16,8 @@ export const customerData = [
     status: "Lead",
     totalOrders: 0,
     createdAt: "2026-01-15",
-    socialLinks: ["https://linkedin.com/in/rahulsharma"],
+    image: "https://i.pravatar.cc/150?img=1",
+    socialLinks: ["https://linkedin.com/in/rahulsharma", "https://twitter.com/priyaverma"],
   },
   {
     customerId: "CUST002",
@@ -24,6 +27,7 @@ export const customerData = [
     status: "Contacted",
     totalOrders: 0,
     createdAt: "2026-02-10",
+    image: "https://i.pravatar.cc/150?img=5",
     socialLinks: ["https://twitter.com/priyaverma"],
   },
   {
@@ -34,6 +38,7 @@ export const customerData = [
     status: "Interested",
     totalOrders: 1,
     createdAt: "2026-02-22",
+    image: "https://i.pravatar.cc/150?img=8",
     socialLinks: [],
   },
   {
@@ -44,6 +49,7 @@ export const customerData = [
     status: "Customer",
     totalOrders: 5,
     createdAt: "2026-03-05",
+    image: "https://i.pravatar.cc/150?img=9",
     socialLinks: ["https://linkedin.com/in/nehagupta"],
   },
   {
@@ -54,6 +60,7 @@ export const customerData = [
     status: "Customer",
     totalOrders: 8,
     createdAt: "2026-03-18",
+    image: "https://i.pravatar.cc/150?img=11",
     socialLinks: [],
   },
   {
@@ -64,6 +71,7 @@ export const customerData = [
     status: "Inactive",
     totalOrders: 2,
     createdAt: "2026-04-01",
+    image: "https://i.pravatar.cc/150?img=16",
     socialLinks: [],
   },
   {
@@ -74,6 +82,7 @@ export const customerData = [
     status: "Lead",
     totalOrders: 0,
     createdAt: "2026-04-12",
+    image: "https://i.pravatar.cc/150?img=18",
     socialLinks: [],
   },
   {
@@ -84,6 +93,7 @@ export const customerData = [
     status: "Customer",
     totalOrders: 12,
     createdAt: "2026-05-08",
+    image: "https://i.pravatar.cc/150?img=20",
     socialLinks: ["https://linkedin.com/in/snehakapoor"],
   },
   {
@@ -94,6 +104,7 @@ export const customerData = [
     status: "Interested",
     totalOrders: 1,
     createdAt: "2026-05-20",
+    image: "https://i.pravatar.cc/150?img=22",
     socialLinks: [],
   },
   {
@@ -104,56 +115,59 @@ export const customerData = [
     status: "Customer",
     totalOrders: 15,
     createdAt: "2026-06-02",
+    image: "https://i.pravatar.cc/150?img=25",
     socialLinks: [],
   },
 ];
 
+
 export default function CustomerPage() {
-    const [search, setSearch] = useState("");
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
-    const filtered = customerData.filter(
-        (c) =>
-            c.name.toLowerCase().includes(search.toLowerCase()) ||
-            c.email.toLowerCase().includes(search.toLowerCase()) ||
-            c.contact.includes(search)
-    );
+  function handleSelect(customer: Customer) {
+    setSelectedCustomer(customer);
+    setDrawerOpen(true);
+  }
 
-    function handleSelect(customer: Customer) {
-        setSelectedCustomer(customer);
-        setDrawerOpen(true);
-    }
+  function handleClose() {
+    setDrawerOpen(false);
+    setTimeout(() => setSelectedCustomer(null), 300);
+  }
+  const column = getColumns(handleSelect)
+  return (
+    <div className="flex flex-col w-full min-h-screen">
+      <div className="flex justify-between items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
+        <h1 className="text-xl font-semibold text-foreground">Customers</h1>
+        <button
+          onClick={() => navigate("/new/customer")}
+          className="flex items-center px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+          <IoIosAdd size={26} />  Add Customer
+        </button>
+      </div>
 
-    function handleClose() {
-        setDrawerOpen(false);
-        setTimeout(() => setSelectedCustomer(null), 300);
-    }
-  const column = getColumns()
-    return (
-        <div className="flex flex-col w-full min-h-screen">
-            {/* Top Bar */}
-            <div className="flex justify-between items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
-                <h1 className="text-xl font-semibold text-foreground">Customers</h1>
-                <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-                    + Add Customer
-                </button>
-            </div>
+      <div className="p-4">
+        <Cards />
+      </div>
 
-           <div className="p-4">
-            <Cards/>
-           </div>
 
-          <div className="p-4">
-             <DataTable columns={column} data={customerData}/>
-          </div>
+      <div className="p-4 relative">
+        {
+          selectedCustomer !== null && <div className="z-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><CustomerSummary customer={selectedCustomer} /></div>
+        }
+        <DataTable columns={column} data={customerData} />
+      </div>
 
-            {drawerOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]"
-                    onClick={handleClose}
-                />
-            )}
+
+
+      {drawerOpen && (
+        <div>
+          <div
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]"
+            onClick={handleClose} />
         </div>
-    );
+      )}
+    </div>
+  );
 }

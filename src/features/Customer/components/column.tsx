@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-
+import { Customer } from "../types";
 import { Button } from "@/Components/ui/button";
 import {
   DropdownMenu,
@@ -11,18 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 
-export type Customer = {
-  customerId: string;
-  name: string;
-  email: string;
-  contact: string;
-  status: string;
-  totalOrders: number;
-  createdAt: string;
-  socialLinks: string[];
-};
 
-export const getColumns = (): ColumnDef<Customer>[] => [
+
+
+
+export const getColumns = (handleSelect: (customer: Customer) => void,): ColumnDef<Customer>[] => [
   {
     accessorKey: "customerId",
     header: "Customer ID",
@@ -30,6 +23,13 @@ export const getColumns = (): ColumnDef<Customer>[] => [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => (
+      <button
+        className="hover:text-primary hover:underline"
+        onClick={() => { handleSelect(row.original) }}>
+        {row.original.name}
+      </button>
+    )
   },
   {
     accessorKey: "email",

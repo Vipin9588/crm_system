@@ -1,5 +1,4 @@
-import type { OrderObject } from "./components/OrderListCard";
-
+import { OrderObject } from "./OrderListCard";
 type OrderProps = {
   showSummary: OrderObject | null;
 };
@@ -12,7 +11,7 @@ export default function OrderSummaryCard({
   return (
     <div className="h-full bg-card overflow-y-auto">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b bg-card p-6">
+      <div className="sticky top-0 z-10 border-b bg-card p-6 w-[10%]  w-full">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -34,7 +33,7 @@ export default function OrderSummaryCard({
         </p>
       </div>
 
-      <div className="space-y-5 p-6">
+      <div className="space-y-5 p-6  h-[80%]  overflow-y-scroll">
         {/* Customer Card */}
         <div className="rounded-2xl border bg-card p-5 shadow-sm">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

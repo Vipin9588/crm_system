@@ -9,37 +9,37 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import { Package, Boxes, AlertTriangle, TrendingUp } from "lucide-react";
+import { Users, Boxes, AlertTriangle, TrendingUp } from "lucide-react";
 
 const cards = [
     {
-        title: "Payment Done",
-        value: "₹5,490",
-        description: "Amount paid by customers",
-        badge: "Orders",
-        icon: Package,
+        title: "total customers",
+        value: "5,490",
+        description: "toatal number of  customers",
+        badge: "customer",
+        icon: Users,
         badgeClass: "bg-info/10 text-info",
         iconClass: "text-info",
     },
     {
-        title: "Pending Payments",
-        value: "₹2,100",
-        description: "Amount not paid yet",
-        badge: "Pending",
-        icon: Boxes,
-        badgeClass: "bg-warning/10 text-warning",
-        iconClass: "text-warning",
+        title: "Active customers",
+        value: "2,100",
+        description: "toatal number of Active customers",
+        badge: "Active",
+        icon: Users,
+        badgeClass: "bg-success/10 text-success",
+        iconClass: "text-success",
     },
     {
-        title: "Cancelled Amount",
-        value: "₹1,350",
-        description: "Orders cancelled total amount",
+        title: "Not Active",
+        value: "1,350",
+        description: "total number of not active customers",
         badge: "Alert",
         icon: AlertTriangle,
         badgeClass: "bg-destructive/10 text-destructive",
         iconClass: "text-destructive",
     },
-   
+
 ];
 
 export default function Cards() {

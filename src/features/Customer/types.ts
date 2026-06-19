@@ -1,8 +1,13 @@
+
+
 export interface Customer {
-    userId: string;
+    customerId: string;
     name: string;
     email: string;
+    image: string;
     contact: string;
+    status: string;
+    totalOrders: number;
     createdAt: string;
-    socialLink: string[];
-}
+    socialLinks: string[];
+};

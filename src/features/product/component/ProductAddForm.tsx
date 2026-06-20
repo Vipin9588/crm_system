@@ -10,6 +10,7 @@ import { uploadImageToCloudinary } from "@/services/cloudnairy";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/config/firebase"
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { AddToCollection } from "@/services/userService";
 export default function ProductAddForm() {
   const { user } = useAuth();
   let timeOut: ReturnType<typeof setTimeout>;
@@ -51,7 +52,7 @@ export default function ProductAddForm() {
         );
 
         const finalValues = { ...values, userId, images: imageUrls }
-        await addDoc(collection(db, "Products"), finalValues);
+        await  AddToCollection("Products",finalValues)
         FilesUploadRef.current?.clearFiles()
 
       } catch (error) {

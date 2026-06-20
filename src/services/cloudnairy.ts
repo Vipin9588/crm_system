@@ -7,7 +7,7 @@ export const uploadImageToCloudinary = async (
         formData.append("file", file);
         formData.append(
             "upload_preset",
-            import.meta.env.VITE_CLOUDINARY_PRESET
+             import.meta.env.VITE_CLOUDINARY_PRESET
         );
 
         const response = await fetch(

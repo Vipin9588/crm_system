@@ -1,4 +1,4 @@
-import { addDoc, collection,doc, updateDoc ,deleteDoc} from "firebase/firestore";
+import { addDoc, collection,doc, updateDoc ,deleteDoc,DocumentData} from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 
@@ -18,13 +18,13 @@ export interface Product {
  
 }
 
-export async function addProduct(
-  product: Product
-) {
+
+
+export async function AddToCollection<T extends DocumentData>(collectionName:string,data:T) {
   try {
     const docRef = await addDoc(
-      collection(db, "products"),
-      product
+      collection(db,collectionName),
+      data
     );
 
     return docRef.id;

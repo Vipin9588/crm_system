@@ -24,6 +24,7 @@ const getProducts = async (userId: string): Promise<productDatatype[]> => {
     }
 };
 
+
 export default getProducts;
 
 

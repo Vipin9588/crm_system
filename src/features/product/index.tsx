@@ -8,12 +8,16 @@ import { productDatatype } from './productStructer';
 import { search } from './api/search';
 import { DataTable } from '@/Components/table/data-table';
 import { getColumns } from './component/columns';
+import getProducts from './api/getProducts';
+import getProductStats from './api/getStatus';
 export default function ProductPage() {
     const [Products, setProducts] = useState<productDatatype[]>([]);
     const [filter, setFilter] = useState<string | null>(null)
     const { user } = useAuth();
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const column = getColumns();
+
+    
 const demoData = [
   {
     month: "Jan",
@@ -132,6 +136,9 @@ const demoData = [
         "var(--chart-red)",
         "var(--chart-purple)",
     ];
+
+    
+
 
     if (!user) return null;
 

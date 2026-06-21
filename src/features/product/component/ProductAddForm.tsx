@@ -7,8 +7,6 @@ import { productCategories } from "@/config/categoryConfigs";
 import { useFormik } from "formik";
 import { productDatatype } from "../productStructer";
 import { uploadImageToCloudinary } from "@/services/cloudnairy";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/config/firebase"
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { AddToCollection } from "@/services/userService";
 export default function ProductAddForm() {

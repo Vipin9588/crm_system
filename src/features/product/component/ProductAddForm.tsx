@@ -39,6 +39,8 @@ export default function ProductAddForm() {
       attribute: {
 
       }
+         ,   createdAt: new Date().toDateString(),
+
     },
     onSubmit: async (values, { resetForm }) => {
       setLoding(true)

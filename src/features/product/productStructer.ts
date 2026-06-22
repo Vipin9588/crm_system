@@ -17,4 +17,7 @@ export type productDatatype = {
     stock: string,
     images: ImageItem[],
     attribute: Record<string, string[] | string>
+    createdAt: string
+
+    
 }

@@ -1,14 +1,12 @@
 import { ProductCards } from '@/features/product/component/ProductsCards'
 import CustomPieChart from '@/Components/chart/PieChart'
 import ReusableLineChart from '@/Components/chart/AreaChart'
-import ProductListHeader from '@/features/product/component/ProductListHeader';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/Context/Authcontext/AuthProvider';
 import { productDatatype } from './productStructer';
 import { search } from './api/search';
 import { DataTable } from '@/Components/table/data-table';
 import { getColumns } from './component/columns';
-import getProducts from './api/getProducts';
 import getProductStats from './api/getStatus';
 export default function ProductPage() {
     const [Products, setProducts] = useState<productDatatype[]>([]);
@@ -97,7 +95,10 @@ const demoData = [
         }, 50);
     };
 
-
+   useEffect(()=>{
+    if(!user) return
+        (async ()=>console.log("status called ",await getProductStats(user?.uid)))()
+   },[])
 
 
     const data = [

@@ -1,43 +1,67 @@
 import countDoc from "@/services/countDoc";
-import { object } from "zod";
-import Product from "../component/Product";
 
-interface status {
-    categories:string[],
-    totalProducts:number,
-    lowStock:number,
-    inventeryValue:number,
-    products: any[]
+type CategoryType = {
+  name: string;
+  productcount: number;
+};
+
+interface Status {
+  categories: CategoryType[];
+  totalProducts: number;
+  lowStock: number;
+  inventoryValue: number;
+  products: any[];
 }
 
+const getProductStats = async (
+  userId: string
+): Promise<Status | undefined> => {
+  try {
+    const list = await countDoc<any>(userId, "Products");
 
-const getProductStats = async(userId:string)=>{
-     try {
-     let obj = {
-    categories:[],
-    totalProducts:0,
-    lowStock:0,
-    inventeryValue:0,
-    products: []
-     }
-       const list = await countDoc<any>(userId,"Products")
-       const categories = list.map((p,i)=>{
-         obj.categories.push(p?.category);
-         obj.totalProducts+=1;
-         obj.inventeryValue+=(p.stock *p.costPrice);
-         if(p.stock < 25){
-          obj.lowStock +=1
-         }
-       });
-       
-      obj.products = list;
+    const categoryMap: Record<string, number> = {};
 
-      return obj
-      
+    const stats: Status = {
+      categories: [],
+      totalProducts: 0,
+      lowStock: 0,
+      inventoryValue: 0,
+      products: list,
+    };
 
-     } catch (error) {
-        
-     }
-}
+    list.forEach((product) => {
+      // Total products
+      stats.totalProducts++;
 
-export default getProductStats
+      // Inventory value
+      stats.inventoryValue +=
+        Number(product.stock || 0) *
+        Number(product.costPrice || 0);
+
+      // Low stock count
+      if (Number(product.stock) < 25) {
+        stats.lowStock++;
+      }
+
+      // Category count
+      const category = product.category || "Uncategorized";
+
+      categoryMap[category] =
+        (categoryMap[category] || 0) + 1;
+    });
+
+    // Convert object into array
+    stats.categories = Object.entries(categoryMap).map(
+      ([name, productcount]) => ({
+        name,
+        productcount,
+      })
+    );
+
+    return stats;
+  } catch (error) {
+    console.error("Error fetching product stats:", error);
+  }
+};
+
+export default getProductStats;

@@ -1,0 +1,705 @@
+import { useState, useMemo, type ComponentType, type ReactNode } from "react";
+import { useFormik, type FormikErrors, type FormikTouched } from "formik";
+import {
+  Search,
+  Plus,
+  Minus,
+  Trash2,
+  Package,
+  User,
+  Calendar,
+  Hash,
+  ChevronDown,
+  Check,
+  ShoppingCart,
+} from "lucide-react";
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
+import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { AddToCollection } from "@/services/userService";
+
+
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  price: number;
+  stock: number;
+}
+
+interface StatusOption {
+  value: string;
+  label: string;
+  dot: string;
+}
+
+interface OrderItem {
+  productId: string;
+  name: string;
+  sku: string;
+  price: number;
+  quantity: number;
+}
+
+interface OrderFormValues {
+  userId:string
+  orderId: string;
+  createdAt: string;
+  customerId: string;
+  status: string;
+  deliveryDate: string;
+  items: OrderItem[];
+}
+
+interface SubmittedOrder extends OrderFormValues {
+  total: number;
+}
+
+
+const CUSTOMERS: Customer[] = [
+  { id: "CUS-1001", name: "Ananya Sharma", email: "ananya.sharma@gmail.com" },
+  { id: "CUS-1002", name: "Rohit Verma", email: "rohit.verma@outlook.com" },
+  { id: "CUS-1003", name: "Priya Nair", email: "priya.nair@yahoo.com" },
+  { id: "CUS-1004", name: "Karan Mehta", email: "karan.mehta@gmail.com" },
+  { id: "CUS-1005", name: "Sneha Iyer", email: "sneha.iyer@hotmail.com" },
+  { id: "CUS-1006", name: "Vikram Singh", email: "vikram.singh@gmail.com" },
+];
+
+const PRODUCTS: Product[] = [
+  { id: "PRD-001", name: "Wireless Mouse", sku: "WM-2210", price: 799, stock: 42 },
+  { id: "PRD-002", name: "Mechanical Keyboard", sku: "MK-1180", price: 3499, stock: 18 },
+  { id: "PRD-003", name: "USB-C Hub", sku: "UC-3340", price: 1299, stock: 65 },
+  { id: "PRD-004", name: "27-inch Monitor", sku: "MN-2700", price: 14999, stock: 9 },
+  { id: "PRD-005", name: "Laptop Stand", sku: "LS-0044", price: 1499, stock: 31 },
+  { id: "PRD-006", name: "Webcam 1080p", sku: "WC-1080", price: 2199, stock: 24 },
+  { id: "PRD-007", name: "Noise Cancelling Headset", sku: "NH-9090", price: 5999, stock: 12 },
+];
+
+const STATUS_OPTIONS: StatusOption[] = [
+  { value: "pending", label: "Pending", dot: "var(--warning)" },
+  { value: "processing", label: "Processing", dot: "var(--chart-blue)" },
+  { value: "shipped", label: "Shipped", dot: "var(--chart-purple)" },
+  { value: "delivered", label: "Delivered", dot: "var(--success)" },
+  { value: "cancelled", label: "Cancelled", dot: "var(--danger)" },
+];
+
+
+function generateOrderId(): string {
+  const ts = Date.now().toString(36).toUpperCase().slice(-6);
+  return `ORD-${ts}`;
+}
+
+function nowISOLocal(): string {
+  const d = new Date();
+  const offset = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 16); 
+}
+
+function formatCurrency(n: number): string {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
+function todayISODate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+
+type OrderFormErrors = Partial<Record<keyof OrderFormValues, string>>;
+
+function validateOrderForm(values: OrderFormValues): OrderFormErrors {
+  const errors: OrderFormErrors = {};
+
+  if (!values.customerId) {
+    errors.customerId = "Select a customer";
+  }
+
+  if (!values.status) {
+    errors.status = "Select a status";
+  }
+
+  if (!values.deliveryDate) {
+    errors.deliveryDate = "Pick a delivery date";
+  } else if (values.deliveryDate < todayISODate()) {
+    errors.deliveryDate = "Delivery date can't be before today";
+  }
+
+  if (!values.items || values.items.length === 0) {
+    errors.items = "Add at least one product";
+  } else if (values.items.some((i) => !i.productId || !i.quantity || i.quantity < 1)) {
+    errors.items = "Each product needs a quantity of at least 1";
+  }
+
+  return errors;
+}
+
+
+interface FieldShellProps {
+  label: string;
+  htmlFor: string;
+  icon?: ComponentType<{ className?: string }>;
+  error?: string;
+  touched?: boolean;
+  children: ReactNode;
+  hint?: string;
+}
+
+function FieldShell({ label, htmlFor, icon: Icon, error, touched, children, hint }: FieldShellProps) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label
+        htmlFor={htmlFor}
+        className="flex items-center gap-1.5 text-[13px] font-medium text-foreground/80"
+      >
+        {Icon ? <Icon className="size-3.5 text-muted-foreground" /> : null}
+        {label}
+      </label>
+      {children}
+      {hint && !(touched && error) ? (
+        <span className="text-xs text-muted-foreground">{hint}</span>
+      ) : null}
+      {touched && error ? (
+        <span className="text-xs font-medium text-destructive">{error}</span>
+      ) : null}
+    </div>
+  );
+}
+
+
+interface CustomerPickerProps {
+  value: string;
+  onChange: (id: string) => void;
+  error?: string;
+  touched?: boolean;
+}
+
+function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const selected = CUSTOMERS.find((c) => c.id === value);
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return CUSTOMERS;
+    const q = query.toLowerCase();
+    return CUSTOMERS.filter(
+      (c) => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+    );
+  }, [query]);
+
+  return (
+    <FieldShell label="Customer" htmlFor="customerId" icon={User} error={error} touched={touched}>
+      <div className="relative">
+        <button
+          id="customerId"
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className={`flex w-full items-center justify-between rounded-md border bg-card px-3 py-2.5 text-left text-sm transition-colors ${
+            touched && error ? "border-destructive" : "border-input"
+          } hover:border-ring/60 focus:outline-none focus:ring-2 focus:ring-ring/40`}
+        >
+          {selected ? (
+            <span className="flex items-center gap-2 truncate">
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+                {selected.name
+                  .split(" ")
+                  .map((p) => p[0])
+                  .slice(0, 2)
+                  .join("")}
+              </span>
+              <span className="truncate">
+                <span className="font-medium text-foreground">{selected.name}</span>
+                <span className="ml-1.5 text-muted-foreground">{selected.email}</span>
+              </span>
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Search or select a customer…</span>
+          )}
+          <ChevronDown
+            className={`size-4 shrink-0 text-muted-foreground transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {open && (
+          <div className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-md border border-border bg-popover shadow-lg">
+            <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+              <Search className="size-4 text-muted-foreground" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Type a name or email…"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+            </div>
+            <ul className="max-h-56 overflow-y-auto py-1">
+              {filtered.length === 0 ? (
+                <li className="px-3 py-3 text-sm text-muted-foreground">No customers found</li>
+              ) : (
+                filtered.map((c) => (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(c.id);
+                        setOpen(false);
+                        setQuery("");
+                      }}
+                      className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-accent"
+                    >
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
+                        {c.name
+                          .split(" ")
+                          .map((p) => p[0])
+                          .slice(0, 2)
+                          .join("")}
+                      </span>
+                      <span className="flex-1 truncate">
+                        <span className="block font-medium text-foreground">{c.name}</span>
+                        <span className="block truncate text-xs text-muted-foreground">
+                          {c.email}
+                        </span>
+                      </span>
+                      {c.id === value && <Check className="size-4 text-primary" />}
+                    </button>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+    </FieldShell>
+  );
+}
+
+
+interface ProductSearchProps {
+  excludeIds: string[];
+  onAdd: (product: Product) => void;
+}
+
+function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return PRODUCTS.filter((p) => !excludeIds.includes(p.id)).filter(
+      (p) => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
+    );
+  }, [query, excludeIds]);
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-2 rounded-md border border-input bg-card px-3 py-2.5 focus-within:ring-2 focus-within:ring-ring/40">
+        <Search className="size-4 text-muted-foreground" />
+        <input
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder="Search products by name or SKU…"
+          className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        />
+      </div>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <ul className="absolute z-20 mt-1.5 max-h-64 w-full overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-lg">
+            {filtered.length === 0 ? (
+              <li className="px-3 py-3 text-sm text-muted-foreground">
+                No matching products{excludeIds.length ? " (or already added)" : ""}
+              </li>
+            ) : (
+              filtered.map((p) => (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onAdd(p);
+                      setQuery("");
+                      setOpen(false);
+                    }}
+                    className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+                        <Package className="size-4" />
+                      </span>
+                      <span>
+                        <span className="block font-medium text-foreground">{p.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          SKU {p.sku} · {p.stock} in stock
+                        </span>
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-sm font-medium text-foreground">
+                      {formatCurrency(p.price)}
+                    </span>
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
+
+interface StatusSelectProps {
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  touched?: boolean;
+}
+
+function StatusSelect({ value, onChange, error, touched }: StatusSelectProps) {
+  const [open, setOpen] = useState(false);
+  const current = STATUS_OPTIONS.find((s) => s.value === value);
+
+  return (
+    <FieldShell label="Status" htmlFor="status" error={error} touched={touched}>
+      <div className="relative">
+        <button
+          id="status"
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className={`flex w-full items-center justify-between rounded-md border bg-card px-3 py-2.5 text-left text-sm transition-colors ${
+            touched && error ? "border-destructive" : "border-input"
+          } hover:border-ring/60 focus:outline-none focus:ring-2 focus:ring-ring/40`}
+        >
+          {current ? (
+            <span className="flex items-center gap-2">
+              <span className="size-2 rounded-full" style={{ backgroundColor: current.dot }} />
+              {current.label}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">Select status…</span>
+          )}
+          <ChevronDown
+            className={`size-4 text-muted-foreground transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+            <ul className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-md border border-border bg-popover py-1 shadow-lg">
+              {STATUS_OPTIONS.map((s) => (
+                <li key={s.value}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange(s.value);
+                      setOpen(false);
+                    }}
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="size-2 rounded-full" style={{ backgroundColor: s.dot }} />
+                      {s.label}
+                    </span>
+                    {s.value === value && <Check className="size-4 text-primary" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+    </FieldShell>
+  );
+}
+
+
+export default function OrderForm() {
+  const [orderId] = useState<string>(generateOrderId);
+  const [createdAt] = useState<string>(nowISOLocal);
+  const {user} = useAuth();
+   if (!user) return;
+  const formik = useFormik<OrderFormValues>({
+    initialValues: {
+      userId:user?.uid,
+      orderId,
+      createdAt,
+      customerId: "",
+      status: "pending",
+      deliveryDate: "",
+      items: [],
+    },
+    validate: validateOrderForm,
+    onSubmit: async (values) => {
+      const total = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const payload: SubmittedOrder = { ...values, total };
+      await AddToCollection("Orders",payload)
+      toastMessage(`${values.orderId} created with
+            ${values.items.length} item(s), total ${formatCurrency(payload.total)}`,"success");
+            formik.resetForm(); 
+    },
+  });
+
+  const { values, errors, touched, setFieldValue, setFieldTouched, handleSubmit, isSubmitting } =
+    formik;
+
+  // Formik types errors/touched as FormikErrors<T> / FormikTouched<T>; narrow the
+  // pieces we read directly so JSX below stays simple.
+  const fieldErrors = errors as FormikErrors<OrderFormValues>;
+  const fieldTouched = touched as FormikTouched<OrderFormValues>;
+  const itemsError = typeof fieldErrors.items === "string" ? fieldErrors.items : undefined;
+
+  const addProduct = (product: Product) => {
+    const newItem: OrderItem = {
+      productId: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: product.price,
+      quantity: 1,
+    };
+    setFieldValue("items", [...values.items, newItem]);
+  };
+
+  const updateQty = (productId: string, qty: number) => {
+    const clamped = Math.max(1, Math.min(999, qty || 1));
+    setFieldValue(
+      "items",
+      values.items.map((i) => (i.productId === productId ? { ...i, quantity: clamped } : i))
+    );
+  };
+
+  const removeItem = (productId: string) => {
+    setFieldValue("items", values.items.filter((i) => i.productId !== productId));
+  };
+
+  const subtotal = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const totalUnits = values.items.reduce((sum, i) => sum + i.quantity, 0);
+  const customer = CUSTOMERS.find((c) => c.id === values.customerId);
+  const {toastMessage} = useNotify();
+
+  return (
+    <div className="min-h-full w-full bg-background p-4 sm:p-8">
+      <form onSubmit={handleSubmit} className="mx-auto flex w-full max-w-3xl flex-col gap-6" noValidate>
+        <div className="flex flex-col gap-1 border-b border-border pb-5">
+          <div className="flex items-center justify-between gap-3">
+            <h1
+              className="font-semibold text-foreground"
+              style={{ fontSize: "var(--font-lg)" }}
+            >
+              New Order
+            </h1>
+            <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+              Draft
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Fill in customer and product details to create an order.
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-4 rounded-md border border-border bg-muted/40 p-3 sm:grid-cols-2">
+            <div className="flex items-center gap-2">
+              <Hash className="size-4 text-muted-foreground" />
+              <div>
+                <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                  Order ID
+                </div>
+                <div className="font-mono text-sm font-medium text-foreground">{values.orderId}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="size-4 text-muted-foreground" />
+              <div>
+                <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                  Created
+                </div>
+                <div className="text-sm font-medium text-foreground">
+                  {new Date(values.createdAt).toLocaleString("en-IN", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+     
+        <section className="flex flex-col gap-4">
+          <h2 className="text-sm font-semibold text-foreground">Customer</h2>
+          <CustomerPicker
+            value={values.customerId}
+            onChange={(id) => setFieldValue("customerId", id)}
+            error={fieldErrors.customerId}
+            touched={fieldTouched.customerId}
+          />
+        </section>
+
+       
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <h2 className="col-span-full text-sm font-semibold text-foreground">Order information</h2>
+
+          <StatusSelect
+            value={values.status}
+            onChange={(v) => setFieldValue("status", v)}
+            error={fieldErrors.status}
+            touched={fieldTouched.status}
+          />
+
+          <FieldShell
+            label="Delivery date"
+            htmlFor="deliveryDate"
+            icon={Calendar}
+            error={fieldErrors.deliveryDate}
+            touched={fieldTouched.deliveryDate}
+          >
+            <input
+              id="deliveryDate"
+              type="date"
+              min={todayISODate()}
+              value={values.deliveryDate}
+              onChange={(e) => setFieldValue("deliveryDate", e.target.value)}
+              onBlur={() => setFieldTouched("deliveryDate", true)}
+              className={`rounded-md border bg-card px-3 py-2.5 text-sm text-foreground outline-none transition-colors ${
+                fieldTouched.deliveryDate && fieldErrors.deliveryDate
+                  ? "border-destructive"
+                  : "border-input"
+              } hover:border-ring/60 focus:ring-2 focus:ring-ring/40`}
+            />
+          </FieldShell>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground">Products</h2>
+            <span className="text-xs text-muted-foreground">
+              {values.items.length} item{values.items.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+
+          <ProductSearch excludeIds={values.items.map((i) => i.productId)} onAdd={addProduct} />
+          {fieldTouched.items && itemsError && (
+            <span className="text-xs font-medium text-destructive">{itemsError}</span>
+          )}
+
+          {values.items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border py-8 text-center">
+              <ShoppingCart className="size-6 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">No products added yet</p>
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {values.items.map((item) => (
+                <li
+                  key={item.productId}
+                  className="flex items-center gap-3 rounded-md border border-border bg-card p-3"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
+                    <Package className="size-4" />
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium text-foreground">{item.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      SKU {item.sku} · {formatCurrency(item.price)} each
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 rounded-md border border-input">
+                    <button
+                      type="button"
+                      onClick={() => updateQty(item.productId, item.quantity - 1)}
+                      className="flex size-7 items-center justify-center text-muted-foreground hover:text-foreground"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="size-3.5" />
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      value={item.quantity}
+                      onChange={(e) => updateQty(item.productId, parseInt(e.target.value, 10))}
+                      className="w-10 bg-transparent text-center text-sm font-medium text-foreground outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateQty(item.productId, item.quantity + 1)}
+                      className="flex size-7 items-center justify-center text-muted-foreground hover:text-foreground"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="size-3.5" />
+                    </button>
+                  </div>
+
+                  <div className="w-20 shrink-0 text-right text-sm font-semibold text-foreground">
+                    {formatCurrency(item.price * item.quantity)}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeItem(item.productId)}
+                    className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    aria-label={`Remove ${item.name}`}
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Customer</span>
+            <span className="font-medium text-foreground">{customer ? customer.name : "—"}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Total units</span>
+            <span className="font-medium text-foreground">{totalUnits}</span>
+          </div>
+          <div className="my-1 h-px bg-border" />
+          <div className="flex items-center justify-between text-base">
+            <span className="font-semibold text-foreground">Subtotal</span>
+            <span className="font-semibold text-foreground">{formatCurrency(subtotal)}</span>
+          </div>
+        </section>
+
+        <div className="flex items-center justify-end gap-3 border-t border-border pt-5">
+          <button
+            type="button"
+            onClick={() => formik.resetForm()}
+            className="rounded-md px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary"
+          >
+            Reset
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {isSubmitting ? "Creating order…" : "Create order"}
+          </button>
+        </div>
+
+        
+            
+      </form>
+    </div>
+  );
+}

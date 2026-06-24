@@ -10,6 +10,7 @@ import Sale from "@/Components/pages/Sale";
 import DemoPage from "@/Components/table/page";
 import CustomerPage from "@/features/Customer";
 import AddCustomerForm from "@/features/Customer/components/NewCustomer";
+import OrderForm from "@/features/Order/components/OrderForm";
 
 const router = createBrowserRouter([
     {
@@ -42,6 +43,9 @@ const router = createBrowserRouter([
             },{
                 path:"new/customer",
                 element:<AddCustomerForm/>
+            },{
+                path:"neworder",
+                element:<OrderForm/>
             }
         ]
 

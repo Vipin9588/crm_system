@@ -26,7 +26,7 @@ export default function ProductAddForm() {
 
   const formik = useFormik<productDatatype>({
     initialValues: {
-      id: "",
+      id: Date.now().toString(),
       name: "",
       brand: "",
       description: "",
@@ -39,7 +39,7 @@ export default function ProductAddForm() {
       attribute: {
 
       }
-         ,   createdAt: new Date().toDateString(),
+         , createdAt: new Date().toDateString(),
 
     },
     onSubmit: async (values, { resetForm }) => {

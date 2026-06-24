@@ -2,66 +2,84 @@ import countDoc from "@/services/countDoc";
 
 type CategoryType = {
   name: string;
-  productcount: number;
+  value: number;
 };
+ type analytic = {
+   month:string,
+   productsAdded:number
+ }
 
-interface Status {
+export  interface Status {
   categories: CategoryType[];
   totalProducts: number;
   lowStock: number;
   inventoryValue: number;
   products: any[];
+  monthlyAnalytic:analytic[]
 }
 
-const getProductStats = async (
+const getProductstatus = async (
   userId: string
 ): Promise<Status | undefined> => {
   try {
     const list = await countDoc<any>(userId, "Products");
 
     const categoryMap: Record<string, number> = {};
-
-    const stats: Status = {
+    const monthMap: Record<string, number> = {};
+    const status: Status = {
       categories: [],
       totalProducts: 0,
       lowStock: 0,
       inventoryValue: 0,
       products: list,
+      monthlyAnalytic:[]
     };
 
     list.forEach((product) => {
-      // Total products
-      stats.totalProducts++;
+  status.totalProducts++;
 
-      // Inventory value
-      stats.inventoryValue +=
-        Number(product.stock || 0) *
-        Number(product.costPrice || 0);
+  status.inventoryValue +=
+    Number(product.stock || 0) *
+    Number(product.costPrice || 0);
 
-      // Low stock count
-      if (Number(product.stock) < 25) {
-        stats.lowStock++;
-      }
+  if (Number(product.stock) < 25) {
+    status.lowStock++;
+  }
 
-      // Category count
-      const category = product.category || "Uncategorized";
+  const category = product.category || "Uncategorized";
 
-      categoryMap[category] =
-        (categoryMap[category] || 0) + 1;
-    });
+  categoryMap[category] =
+    (categoryMap[category] || 0) + 1;
 
-    // Convert object into array
-    stats.categories = Object.entries(categoryMap).map(
-      ([name, productcount]) => ({
+  if (product.createdAt) {
+    const date = new Date(product.createdAt);
+
+    const monthYear = date.toLocaleString("en-US", {
+      month: "short",
+      year: "numeric",
+    }); 
+
+    monthMap[monthYear] =
+      (monthMap[monthYear] || 0) + 1;
+  }
+});
+    status.categories = Object.entries(categoryMap).map(
+      ([name, value]) => ({
         name,
-        productcount,
+        value,
       })
     );
 
-    return stats;
+    status.monthlyAnalytic = Object.entries(monthMap).map(([ month,productsAdded])=>({
+      month,
+      productsAdded
+    }))
+
+
+    return status;
   } catch (error) {
-    console.error("Error fetching product stats:", error);
+    console.error("Error fetching product status:", error);
   }
 };
 
-export default getProductStats;
+export default getProductstatus;

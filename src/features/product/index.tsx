@@ -1,134 +1,40 @@
 import { ProductCards } from '@/features/product/component/ProductsCards'
 import CustomPieChart from '@/Components/chart/PieChart'
 import ReusableLineChart from '@/Components/chart/AreaChart'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/Context/Authcontext/AuthProvider';
-import { productDatatype } from './productStructer';
-import { search } from './api/search';
 import { DataTable } from '@/Components/table/data-table';
 import { getColumns } from './component/columns';
-import getProductStats from './api/getStatus';
+import getProductStats, { Status } from './api/getStatus';
+
 export default function ProductPage() {
-    const [Products, setProducts] = useState<productDatatype[]>([]);
-    const [filter, setFilter] = useState<string | null>(null)
+    const [status, setStatus] = useState<Status>({
+        categories: [],
+        totalProducts: 0,
+        lowStock: 0,
+        inventoryValue: 0,
+        products: [],
+        monthlyAnalytic: []
+    });
     const { user } = useAuth();
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const column = getColumns();
 
-    
-const demoData = [
-  {
-    month: "Jan",
-    productsAdded: 45,
-  },
-  {
-    month: "Feb",
-    productsAdded: 62,
-  },
-  {
-    month: "Mar",
-    productsAdded: 78,
-  },
-  {
-    month: "Apr",
-    productsAdded: 55,
-  },
-  {
-    month: "May",
-    productsAdded: 91,
-  },
-  {
-    month: "Jun",
-    productsAdded: 73,
-  },
-  {
-    month: "Jul",
-    productsAdded: 110,
-  },
-  {
-    month: "Aug",
-    productsAdded: 95,
-  },
-  {
-    month: "Sep",
-    productsAdded: 88,
-  },
-  {
-    month: "Oct",
-    productsAdded: 120,
-  },
-  {
-    month: "Nov",
-    productsAdded: 105,
-  },
-  {
-    month: "Dec",
-    productsAdded: 140,
-  },
-];
     useEffect(() => {
-        if (!user) return;
-
+        if (!user) return
         (async () => {
-            if (filter !== null) {
-                const p = await search(user.uid, filter)
-                setProducts(p);
-
-            } else {
-                const p = await search(user.uid)
-                setProducts(p)
+            try {
+                const s = await getProductStats(user?.uid);
+                console.log(s)
+                if(s===undefined) return;
+                setStatus(s);
+            } catch (error) {
+                console.error(error)
             }
-        })()
-    }, [filter, user])
+        })();
+    }, [])
 
 
-    const productSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!user) return;
-
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(async () => {
-            const l = await search(user.uid, e.target.value);
-            if (!l) return;
-            setProducts(l);
-        }, 50);
-    };
-
-   useEffect(()=>{
-    if(!user) return
-        (async ()=>console.log("status called ",await getProductStats(user?.uid)))()
-   },[])
-
-
-    const data = [
-        { name: "Phone", value: 200 },
-        { name: "toys", value: 400 },
-        { name: "clothes", value: 500 },
-        { name: "shoes", value: 900 },
-        { name: "speakers", value: 240 }
-    ]
-
-
-    const inventoryGrowthData = [
-        { month: "Jan", products: 120 },
-        { month: "Feb", products: 135 },
-        { month: "Mar", products: 148 },
-        { month: "Apr", products: 160 },
-        { month: "May", products: 185 },
-        { month: "Jun", products: 210 },
-        { month: "Jul", products: 225 },
-        { month: "Aug", products: 240 },
-    ];
-
-    const categoryData = [
-        { name: "Electronics", value: 120 },
-        { name: "Fashion", value: 80 },
-        { name: "Shoes", value: 50 },
-        { name: "Accessories", value: 40 },
-        { name: "Toys", value: 30 },
-    ];
-
+    
 
     const colors = [
         "var(--chart-blue)",
@@ -138,30 +44,30 @@ const demoData = [
         "var(--chart-purple)",
     ];
 
-    
+
 
 
     if (!user) return null;
 
     return (
         <div>
-            <ProductCards />
+            <ProductCards status={status}/>
             <div className="grid gap-4 lg:grid-cols-[64%_34%] p-4">
                 <div className="p-2 border border-accent rounded-md">
-                    <ReusableLineChart data={demoData} />
+                    <ReusableLineChart data={status.monthlyAnalytic} />
                 </div>
 
                 <div className="p-2 border border-accent rounded-md ">
                     <CustomPieChart
                         title="Products by Category"
-                        data={categoryData}
+                        data={status.categories}
                         colors={colors}
                     />
                 </div>
             </div>
             <div className='p-4  flex flex-col gap-2 '>
 
-                <DataTable columns={column} data={Products} />
+                <DataTable columns={column} data={status.products} />
 
             </div>
 

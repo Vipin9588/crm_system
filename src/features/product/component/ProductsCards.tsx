@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/Components/ui/card";
-
+import type { Status } from "../api/getStatus";
 import {
   Package,
   Boxes,
@@ -17,7 +17,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-export function ProductCards() {
+export function ProductCards({status}:{status:Status}) {
   return (
     <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 p-4">
       {/* Total Products */}
@@ -28,7 +28,7 @@ export function ProductCards() {
           </CardDescription>
 
           <CardTitle className="text-foreground text-3xl font-bold">
-            1,250
+            {status.totalProducts}
           </CardTitle>
 
           <CardAction>
@@ -54,7 +54,7 @@ export function ProductCards() {
           </CardDescription>
 
           <CardTitle className="text-foreground text-3xl font-bold">
-            24
+            {status.categories.length}
           </CardTitle>
 
           <CardAction>
@@ -80,7 +80,7 @@ export function ProductCards() {
           </CardDescription>
 
           <CardTitle className="text-foreground text-3xl font-bold">
-            18
+           {status.lowStock}
           </CardTitle>
 
           <CardAction>
@@ -105,7 +105,7 @@ export function ProductCards() {
           </CardDescription>
 
           <CardTitle className="text-foreground text-3xl font-bold">
-            ₹12.5L
+           {status.inventoryValue}
           </CardTitle>
 
           <CardAction>

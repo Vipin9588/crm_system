@@ -14,19 +14,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/Components/ui/table";
-
-export type OrderObject = {
-  orderId: string;
-  customer: string;
-  status: string;
-  total: number;
-  date: string;
-};
+import { Order } from "./columns";
+// export type OrderObject = {
+//   orderId: string;
+//   customer: string;
+//   status: string;
+//   total: number;
+//   date: string;
+// };
 
 type Props = {
-  orderList: OrderObject[];
+  orderList: Order[];
   setOrderSummary: React.Dispatch<
-    React.SetStateAction<OrderObject | null>
+    React.SetStateAction<Order | null>
   >;
   setOpenSummary: React.Dispatch<
     React.SetStateAction<boolean>

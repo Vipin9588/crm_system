@@ -14,8 +14,8 @@ const countDoc = async <T>(
 
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
-    })) as T[];
+      ...(doc.data() as T),
+    })) ;
   } catch (error) {
     console.error("Error fetching documents:", error);
     throw error;

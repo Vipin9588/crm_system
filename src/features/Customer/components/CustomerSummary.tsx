@@ -9,8 +9,8 @@ type CustomerProps = {
     status: string,
     totalOrders: number,
     createdAt: string,
-    socialLinks: string[],
-    image: string
+    socialLink: string[],
+    pic: string
 };
 
 type SocialMeta = {
@@ -76,7 +76,8 @@ function initials(name: string) {
 }
 
 export default function CustomerSummary({ customer }: { customer: CustomerProps }) {
-    const validLinks = customer.socialLinks
+    console.log("customer summry ",customer)
+    const validLinks = customer.socialLink
         .map((link) => ({ link, meta: getSocialMeta(link) }))
         .filter((entry): entry is { link: string; meta: SocialMeta } => entry.meta !== null);
 
@@ -90,9 +91,9 @@ export default function CustomerSummary({ customer }: { customer: CustomerProps 
             </div>
 
             <div className="mt-4 flex items-center gap-3">
-                {customer.image ? (
+                {customer.pic ? (
                     <img
-                        src={customer.image}
+                        src={customer.pic}
                         alt={customer.name}
                         className="h-12 w-12 rounded-full object-cover ring-1 ring-neutral-200"
                     />

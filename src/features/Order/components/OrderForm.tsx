@@ -1,4 +1,4 @@
-import { useState, useMemo, type ComponentType, type ReactNode } from "react";
+import { useState, useMemo, type ComponentType, type ReactNode, useEffect } from "react";
 import { useFormik, type FormikErrors, type FormikTouched } from "formik";
 import {
   Search,
@@ -16,6 +16,7 @@ import {
 import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { AddToCollection } from "@/services/userService";
+import countDoc from "@/services/countDoc";
 
 
 interface Customer {
@@ -47,7 +48,7 @@ interface OrderItem {
 }
 
 interface OrderFormValues {
-  userId:string
+  userId: string;
   orderId: string;
   createdAt: string;
   customerId: string;
@@ -70,16 +71,6 @@ const CUSTOMERS: Customer[] = [
   { id: "CUS-1006", name: "Vikram Singh", email: "vikram.singh@gmail.com" },
 ];
 
-const PRODUCTS: Product[] = [
-  { id: "PRD-001", name: "Wireless Mouse", sku: "WM-2210", price: 799, stock: 42 },
-  { id: "PRD-002", name: "Mechanical Keyboard", sku: "MK-1180", price: 3499, stock: 18 },
-  { id: "PRD-003", name: "USB-C Hub", sku: "UC-3340", price: 1299, stock: 65 },
-  { id: "PRD-004", name: "27-inch Monitor", sku: "MN-2700", price: 14999, stock: 9 },
-  { id: "PRD-005", name: "Laptop Stand", sku: "LS-0044", price: 1499, stock: 31 },
-  { id: "PRD-006", name: "Webcam 1080p", sku: "WC-1080", price: 2199, stock: 24 },
-  { id: "PRD-007", name: "Noise Cancelling Headset", sku: "NH-9090", price: 5999, stock: 12 },
-];
-
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "pending", label: "Pending", dot: "var(--warning)" },
   { value: "processing", label: "Processing", dot: "var(--chart-blue)" },
@@ -98,7 +89,7 @@ function nowISOLocal(): string {
   const d = new Date();
   const offset = d.getTimezoneOffset();
   const local = new Date(d.getTime() - offset * 60000);
-  return local.toISOString().slice(0, 16); 
+  return local.toISOString().slice(0, 16);
 }
 
 function formatCurrency(n: number): string {
@@ -293,13 +284,53 @@ interface ProductSearchProps {
 function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    // Bug fixed: effect previously had `[]` as its dependency array, so if `user`
+    // resolved asynchronously after the first render the product fetch never re-ran.
+    // Depending on `user?.uid` makes the effect re-fire once auth is ready.
+    if (!user?.uid) return;
+
+    let cancelled = false;
+
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const list = await countDoc<any>(user.uid, "Products");
+        // Bug fixed: the mapped object was missing `sku`, which the UI relies on
+        // (both here and in the order line items), so it rendered "SKU undefined".
+        const productList: Product[] = list.map((p: any) => ({
+          id: p?.id,
+          name: p?.name,
+          sku: p?.sku ?? "—",
+          stock: p?.stock ?? 0,
+          price: p?.salePrice ?? 0,
+        }));
+        if (!cancelled) setProducts(productList);
+      } catch (err) {
+        console.error("Failed to load products", err);
+        if (!cancelled) setProducts([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return PRODUCTS.filter((p) => !excludeIds.includes(p.id)).filter(
-      (p) => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
-    );
-  }, [query, excludeIds]);
+    return products
+      .filter((p) => !excludeIds.includes(p.id))
+      .filter((p) => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+  }, [query, excludeIds, products]);
 
   return (
     <div className="relative">
@@ -321,7 +352,9 @@ function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <ul className="absolute z-20 mt-1.5 max-h-64 w-full overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-lg">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <li className="px-3 py-3 text-sm text-muted-foreground">Loading products…</li>
+            ) : filtered.length === 0 ? (
               <li className="px-3 py-3 text-sm text-muted-foreground">
                 No matching products{excludeIds.length ? " (or already added)" : ""}
               </li>
@@ -433,11 +466,19 @@ function StatusSelect({ value, onChange, error, touched }: StatusSelectProps) {
 export default function OrderForm() {
   const [orderId] = useState<string>(generateOrderId);
   const [createdAt] = useState<string>(nowISOLocal);
-  const {user} = useAuth();
-   if (!user) return;
+  const { user } = useAuth();
+  const { toastMessage } = useNotify();
+
+  // Bug fixed: the component previously called `useAuth()` then did
+  // `if (!user) return;` BEFORE calling `useFormik`. That's a conditional hook
+  // call — when `user` flips from null to a real object between renders, React
+  // sees a different number/order of hooks called and throws
+  // "Rendered fewer hooks than expected". Hooks must always run unconditionally,
+  // so `useFormik` is now called every render, and we only gate the JSX return
+  // (not the hook calls) on `user` being present.
   const formik = useFormik<OrderFormValues>({
     initialValues: {
-      userId:user?.uid,
+      userId: user?.uid ?? "",
       orderId,
       createdAt,
       customerId: "",
@@ -445,14 +486,33 @@ export default function OrderForm() {
       deliveryDate: "",
       items: [],
     },
+    enableReinitialize: false,
     validate: validateOrderForm,
-    onSubmit: async (values) => {
+    onSubmit: async (values, helpers) => {
+      if (!user?.uid) {
+        toastMessage("You must be signed in to create an order", "error");
+        return;
+      }
       const total = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      const payload: SubmittedOrder = { ...values, total };
-      await AddToCollection("Orders",payload)
-      toastMessage(`${values.orderId} created with
-            ${values.items.length} item(s), total ${formatCurrency(payload.total)}`,"success");
-            formik.resetForm(); 
+      const payload: SubmittedOrder = { ...values, userId: user.uid, total };
+
+      // Bug fixed: previously there was no try/catch around the async call.
+      // If `AddToCollection` rejected, the thrown error skipped the toast and
+      // `resetForm()` call entirely, and Formik would leave `isSubmitting` in
+      // an inconsistent state with no feedback to the user.
+      try {
+        await AddToCollection("Orders", payload);
+        toastMessage(
+          `${values.orderId} created with ${values.items.length} item(s), total ${formatCurrency(
+            payload.total
+          )}`,
+          "success"
+        );
+        helpers.resetForm();
+      } catch (err) {
+        console.error("Failed to create order", err);
+        toastMessage("Couldn't create the order. Please try again.", "error");
+      }
     },
   });
 
@@ -491,7 +551,16 @@ export default function OrderForm() {
   const subtotal = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const totalUnits = values.items.reduce((sum, i) => sum + i.quantity, 0);
   const customer = CUSTOMERS.find((c) => c.id === values.customerId);
-  const {toastMessage} = useNotify();
+
+  // Bug fixed: this early return now happens AFTER every hook above has been
+  // called unconditionally, so it no longer changes hook call order.
+  if (!user) {
+    return (
+      <div className="flex min-h-full w-full items-center justify-center bg-background p-8">
+        <p className="text-sm text-muted-foreground">Sign in to create an order.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full w-full bg-background p-4 sm:p-8">
@@ -539,7 +608,7 @@ export default function OrderForm() {
           </div>
         </div>
 
-     
+
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-semibold text-foreground">Customer</h2>
           <CustomerPicker
@@ -550,7 +619,7 @@ export default function OrderForm() {
           />
         </section>
 
-       
+
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <h2 className="col-span-full text-sm font-semibold text-foreground">Order information</h2>
 
@@ -696,9 +765,6 @@ export default function OrderForm() {
             {isSubmitting ? "Creating order…" : "Create order"}
           </button>
         </div>
-
-        
-            
       </form>
     </div>
   );

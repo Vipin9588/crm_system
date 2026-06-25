@@ -6,8 +6,9 @@ import { DataTable } from "@/Components/table/data-table";
 import { getColumns } from "@/features/Order/components/columns";
 import ReusablePieChart from "./components/PieChart";
 import ReusableBarChart from "./components/Barchart";
-
+import { useNavigate } from "react-router-dom";
 export default function OrderPage() {
+    const navigate = useNavigate();
   const orders = [
   {
     orderID: "ORD001",
@@ -143,10 +144,14 @@ export default function OrderPage() {
             <div className="flex w-full justify-between items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
                 <h1 className="text-xl font-semibold">Orders</h1>
                 <div className="flex flex-wrap gap-2">
-                    <button className="px-4 py-2 text-sm border border-border rounded-md hover:bg-muted transition-colors">
+                    <button
+                     onClick={()=>navigate("/neworder")}
+                    className="px-4 py-2 text-sm border border-border rounded-md hover:bg-muted transition-colors">
                         Add Order
                     </button>
-                    <button className="px-4 py-2 text-sm border border-border rounded-md hover:bg-muted transition-colors">
+                    <button 
+                      onClick={()=>navigate("/new/customer")}
+                     className="px-4 py-2 text-sm border border-border rounded-md hover:bg-muted transition-colors">
                         Add Contact
                     </button>
                 </div>

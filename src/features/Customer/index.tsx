@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Customer } from "./types";
 import Cards from "./components/Cards";
 import { DataTable } from "@/Components/table/data-table";
@@ -6,6 +6,8 @@ import { getColumns } from "./components/column";
 import CustomerSummary from "./components/CustomerSummary";
 import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { getCustomerStaus } from "./api/getCustomers";
 
 export const customerData = [
   {
@@ -124,6 +126,8 @@ export const customerData = [
 export default function CustomerPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [customers,setCustomers]  = useState<Customer[] | []>([]);
+  const {user} =  useAuth();
   const navigate = useNavigate();
 
   function handleSelect(customer: Customer) {
@@ -135,6 +139,19 @@ export default function CustomerPage() {
     setDrawerOpen(false);
     setTimeout(() => setSelectedCustomer(null), 300);
   }
+   
+  useEffect(()=>{
+     if(!user) return;
+     const getC= async()=>{
+      const customerList =  await getCustomerStaus(user?.uid);
+      console.log("vvsvsdv",customerList)
+      setCustomers(customerList);
+    }
+
+    getC();
+     
+  },[])
+
   const column = getColumns(handleSelect)
   return (
     <div className="flex flex-col w-full min-h-screen">
@@ -154,9 +171,11 @@ export default function CustomerPage() {
 
       <div className="p-4 relative">
         {
-          selectedCustomer !== null && <div className="z-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><CustomerSummary customer={selectedCustomer} /></div>
+          selectedCustomer !== null && <div className="z-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <CustomerSummary customer={selectedCustomer} />
+          </div>
         }
-        <DataTable columns={column} data={customerData} />
+        <DataTable columns={column} data={customers} />
       </div>
 
 

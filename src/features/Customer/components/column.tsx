@@ -11,11 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
 
-
-
-
-export const getColumns = (handleSelect: (customer: Customer) => void,): ColumnDef<Customer>[] => [
+export const getColumns = (
+  handleSelect: (customer: Customer) => void
+): ColumnDef<Customer>[] => [
   {
     accessorKey: "customerId",
     header: "Customer ID",
@@ -26,10 +30,13 @@ export const getColumns = (handleSelect: (customer: Customer) => void,): ColumnD
     cell: ({ row }) => (
       <button
         className="hover:text-primary hover:underline"
-        onClick={() => { handleSelect(row.original) }}>
+        onClick={() => {
+          handleSelect(row.original);
+        }}
+      >
         {row.original.name}
       </button>
-    )
+    ),
   },
   {
     accessorKey: "email",
@@ -42,6 +49,7 @@ export const getColumns = (handleSelect: (customer: Customer) => void,): ColumnD
   {
     accessorKey: "createdAt",
     header: "Created At",
+    cell: ({ row }) => formatDate(row.original.createdAt),
   },
   {
     id: "actions",
@@ -51,42 +59,27 @@ export const getColumns = (handleSelect: (customer: Customer) => void,): ColumnD
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0"
-            >
+            <Button variant="ghost" className="h-8 w-8 p-0">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>
-              Actions
-            </DropdownMenuLabel>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  customer.customerId
-                )
-              }
+              onClick={() => navigator.clipboard.writeText(customer.customerId)}
             >
               Copy ID
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              Edit
-            </DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
 
-            <DropdownMenuItem>
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
 
-            <DropdownMenuItem>
-              View Profile
-            </DropdownMenuItem>
+            <DropdownMenuItem>View Profile</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

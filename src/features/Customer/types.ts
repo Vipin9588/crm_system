@@ -1,13 +1,12 @@
-
-
 export interface Customer {
-    customerId: string;
-    name: string;
-    email: string;
-    pic: string;
-    contact: string;
-    status: string;
-    totalOrders: number;
-    createdAt: string;
-    socialLink: string[];
-};
+  customerId: string;
+  name: string;
+  email: string;
+  contact: string;
+  userId: string;
+  createdAt: string;
+  socialLink: string[];
+  pic: string;
+  status?: "active" | "inactive";
+  totalOrders?: number;
+}

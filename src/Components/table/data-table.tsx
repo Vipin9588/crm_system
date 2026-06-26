@@ -110,23 +110,6 @@ const [columnFilters, setColumnFilters] =
         className="max-w-sm"
     />
 
-    <select
-        className="border bg-background rounded-md  py-1 px-1"
-        value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-        onChange={(e) =>
-            table
-                .getColumn("status")
-                ?.setFilterValue(
-                    e.target.value || undefined
-                )
-        }
-    >
-        <option value="">All Status</option>
-        <option value="Completed">Completed</option>
-        <option value="Pending">Pending</option>
-        <option value="Cancelled">Cancelled</option>
-        <option value="Shipped">Shipped</option>
-    </select>
 </div>
             <div className="overflow-hidden rounded-md border">
                 <Table>

@@ -18,7 +18,6 @@ import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { AddToCollection } from "@/services/userService";
 import countDoc from "@/services/countDoc";
 
-
 interface Customer {
   id: string;
   name: string;
@@ -61,16 +60,6 @@ interface SubmittedOrder extends OrderFormValues {
   total: number;
 }
 
-
-const CUSTOMERS: Customer[] = [
-  { id: "CUS-1001", name: "Ananya Sharma", email: "ananya.sharma@gmail.com" },
-  { id: "CUS-1002", name: "Rohit Verma", email: "rohit.verma@outlook.com" },
-  { id: "CUS-1003", name: "Priya Nair", email: "priya.nair@yahoo.com" },
-  { id: "CUS-1004", name: "Karan Mehta", email: "karan.mehta@gmail.com" },
-  { id: "CUS-1005", name: "Sneha Iyer", email: "sneha.iyer@hotmail.com" },
-  { id: "CUS-1006", name: "Vikram Singh", email: "vikram.singh@gmail.com" },
-];
-
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "pending", label: "Pending", dot: "var(--warning)" },
   { value: "processing", label: "Processing", dot: "var(--chart-blue)" },
@@ -78,7 +67,6 @@ const STATUS_OPTIONS: StatusOption[] = [
   { value: "delivered", label: "Delivered", dot: "var(--success)" },
   { value: "cancelled", label: "Cancelled", dot: "var(--danger)" },
 ];
-
 
 function generateOrderId(): string {
   const ts = Date.now().toString(36).toUpperCase().slice(-6);
@@ -104,6 +92,15 @@ function todayISODate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 type OrderFormErrors = Partial<Record<keyof OrderFormValues, string>>;
 
@@ -132,7 +129,6 @@ function validateOrderForm(values: OrderFormValues): OrderFormErrors {
 
   return errors;
 }
-
 
 interface FieldShellProps {
   label: string;
@@ -165,10 +161,9 @@ function FieldShell({ label, htmlFor, icon: Icon, error, touched, children, hint
   );
 }
 
-
 interface CustomerPickerProps {
   value: string;
-  onChange: (id: string) => void;
+  onChange: (id: string, customer: Customer | undefined) => void;
   error?: string;
   touched?: boolean;
 }
@@ -176,16 +171,48 @@ interface CustomerPickerProps {
 function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const { user } = useAuth();
 
-  const selected = CUSTOMERS.find((c) => c.id === value);
+  useEffect(() => {
+    if (!user?.uid) return;
+    let cancelled = false;
+
+    const fetchCustomers = async () => {
+      setLoading(true);
+      try {
+        const list = await countDoc<any>(user.uid, "Customers");
+        const customerList: Customer[] = list.map((c: any) => ({
+          id: c.customerId,
+          name: c.name,
+          email: c.email,
+        }));
+        if (!cancelled) setCustomers(customerList);
+      } catch (err) {
+        console.error("Failed to load customers", err);
+        if (!cancelled) setCustomers([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid]);
+
+  const selected = customers.find((c) => c.id === value);
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return CUSTOMERS;
+    if (!query.trim()) return customers;
     const q = query.toLowerCase();
-    return CUSTOMERS.filter(
+    return customers.filter(
       (c) => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, customers]);
 
   return (
     <FieldShell label="Customer" htmlFor="customerId" icon={User} error={error} touched={touched}>
@@ -201,11 +228,7 @@ function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps
           {selected ? (
             <span className="flex items-center gap-2 truncate">
               <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
-                {selected.name
-                  .split(" ")
-                  .map((p) => p[0])
-                  .slice(0, 2)
-                  .join("")}
+                {initials(selected.name)}
               </span>
               <span className="truncate">
                 <span className="font-medium text-foreground">{selected.name}</span>
@@ -213,7 +236,9 @@ function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps
               </span>
             </span>
           ) : (
-            <span className="text-muted-foreground">Search or select a customer…</span>
+            <span className="text-muted-foreground">
+              {loading ? "Loading customers…" : "Search or select a customer…"}
+            </span>
           )}
           <ChevronDown
             className={`size-4 shrink-0 text-muted-foreground transition-transform ${
@@ -223,58 +248,58 @@ function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps
         </button>
 
         {open && (
-          <div className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-md border border-border bg-popover shadow-lg">
-            <div className="flex items-center gap-2 border-b border-border px-3 py-2">
-              <Search className="size-4 text-muted-foreground" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Type a name or email…"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              />
-            </div>
-            <ul className="max-h-56 overflow-y-auto py-1">
-              {filtered.length === 0 ? (
-                <li className="px-3 py-3 text-sm text-muted-foreground">No customers found</li>
-              ) : (
-                filtered.map((c) => (
-                  <li key={c.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onChange(c.id);
-                        setOpen(false);
-                        setQuery("");
-                      }}
-                      className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-accent"
-                    >
-                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
-                        {c.name
-                          .split(" ")
-                          .map((p) => p[0])
-                          .slice(0, 2)
-                          .join("")}
-                      </span>
-                      <span className="flex-1 truncate">
-                        <span className="block font-medium text-foreground">{c.name}</span>
-                        <span className="block truncate text-xs text-muted-foreground">
-                          {c.email}
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+            <div className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-md border border-border bg-popover shadow-lg">
+              <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+                <Search className="size-4 text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Type a name or email…"
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+              <ul className="max-h-56 overflow-y-auto py-1">
+                {loading ? (
+                  <li className="px-3 py-3 text-sm text-muted-foreground">Loading customers…</li>
+                ) : filtered.length === 0 ? (
+                  <li className="px-3 py-3 text-sm text-muted-foreground">No customers found</li>
+                ) : (
+                  filtered.map((c) => (
+                    <li key={c.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onChange(c.id, c);
+                          setOpen(false);
+                          setQuery("");
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-accent"
+                      >
+                        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
+                          {initials(c.name)}
                         </span>
-                      </span>
-                      {c.id === value && <Check className="size-4 text-primary" />}
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
+                        <span className="flex-1 truncate">
+                          <span className="block font-medium text-foreground">{c.name}</span>
+                          <span className="block truncate text-xs text-muted-foreground">
+                            {c.email}
+                          </span>
+                        </span>
+                        {c.id === value && <Check className="size-4 text-primary" />}
+                      </button>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          </>
         )}
       </div>
     </FieldShell>
   );
 }
-
 
 interface ProductSearchProps {
   excludeIds: string[];
@@ -289,9 +314,6 @@ function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Bug fixed: effect previously had `[]` as its dependency array, so if `user`
-    // resolved asynchronously after the first render the product fetch never re-ran.
-    // Depending on `user?.uid` makes the effect re-fire once auth is ready.
     if (!user?.uid) return;
 
     let cancelled = false;
@@ -300,8 +322,6 @@ function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
       setLoading(true);
       try {
         const list = await countDoc<any>(user.uid, "Products");
-        // Bug fixed: the mapped object was missing `sku`, which the UI relies on
-        // (both here and in the order line items), so it rendered "SKU undefined".
         const productList: Product[] = list.map((p: any) => ({
           id: p?.id,
           name: p?.name,
@@ -395,7 +415,6 @@ function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
   );
 }
 
-
 interface StatusSelectProps {
   value: string;
   onChange: (value: string) => void;
@@ -462,20 +481,13 @@ function StatusSelect({ value, onChange, error, touched }: StatusSelectProps) {
   );
 }
 
-
 export default function OrderForm() {
   const [orderId] = useState<string>(generateOrderId);
   const [createdAt] = useState<string>(nowISOLocal);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined);
   const { user } = useAuth();
   const { toastMessage } = useNotify();
 
-  // Bug fixed: the component previously called `useAuth()` then did
-  // `if (!user) return;` BEFORE calling `useFormik`. That's a conditional hook
-  // call — when `user` flips from null to a real object between renders, React
-  // sees a different number/order of hooks called and throws
-  // "Rendered fewer hooks than expected". Hooks must always run unconditionally,
-  // so `useFormik` is now called every render, and we only gate the JSX return
-  // (not the hook calls) on `user` being present.
   const formik = useFormik<OrderFormValues>({
     initialValues: {
       userId: user?.uid ?? "",
@@ -496,10 +508,6 @@ export default function OrderForm() {
       const total = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const payload: SubmittedOrder = { ...values, userId: user.uid, total };
 
-      // Bug fixed: previously there was no try/catch around the async call.
-      // If `AddToCollection` rejected, the thrown error skipped the toast and
-      // `resetForm()` call entirely, and Formik would leave `isSubmitting` in
-      // an inconsistent state with no feedback to the user.
       try {
         await AddToCollection("Orders", payload);
         toastMessage(
@@ -509,6 +517,7 @@ export default function OrderForm() {
           "success"
         );
         helpers.resetForm();
+        setSelectedCustomer(undefined);
       } catch (err) {
         console.error("Failed to create order", err);
         toastMessage("Couldn't create the order. Please try again.", "error");
@@ -519,8 +528,6 @@ export default function OrderForm() {
   const { values, errors, touched, setFieldValue, setFieldTouched, handleSubmit, isSubmitting } =
     formik;
 
-  // Formik types errors/touched as FormikErrors<T> / FormikTouched<T>; narrow the
-  // pieces we read directly so JSX below stays simple.
   const fieldErrors = errors as FormikErrors<OrderFormValues>;
   const fieldTouched = touched as FormikTouched<OrderFormValues>;
   const itemsError = typeof fieldErrors.items === "string" ? fieldErrors.items : undefined;
@@ -550,10 +557,7 @@ export default function OrderForm() {
 
   const subtotal = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const totalUnits = values.items.reduce((sum, i) => sum + i.quantity, 0);
-  const customer = CUSTOMERS.find((c) => c.id === values.customerId);
 
-  // Bug fixed: this early return now happens AFTER every hook above has been
-  // called unconditionally, so it no longer changes hook call order.
   if (!user) {
     return (
       <div className="flex min-h-full w-full items-center justify-center bg-background p-8">
@@ -608,17 +612,18 @@ export default function OrderForm() {
           </div>
         </div>
 
-
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-semibold text-foreground">Customer</h2>
           <CustomerPicker
             value={values.customerId}
-            onChange={(id) => setFieldValue("customerId", id)}
+            onChange={(id, c) => {
+              setFieldValue("customerId", id);
+              setSelectedCustomer(c);
+            }}
             error={fieldErrors.customerId}
             touched={fieldTouched.customerId}
           />
         </section>
-
 
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <h2 className="col-span-full text-sm font-semibold text-foreground">Order information</h2>
@@ -736,7 +741,9 @@ export default function OrderForm() {
         <section className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Customer</span>
-            <span className="font-medium text-foreground">{customer ? customer.name : "—"}</span>
+            <span className="font-medium text-foreground">
+              {selectedCustomer ? selectedCustomer.name : "—"}
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Total units</span>
@@ -752,7 +759,10 @@ export default function OrderForm() {
         <div className="flex items-center justify-end gap-3 border-t border-border pt-5">
           <button
             type="button"
-            onClick={() => formik.resetForm()}
+            onClick={() => {
+              formik.resetForm();
+              setSelectedCustomer(undefined);
+            }}
             className="rounded-md px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary"
           >
             Reset

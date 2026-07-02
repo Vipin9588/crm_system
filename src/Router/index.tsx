@@ -5,6 +5,7 @@ import ProtectedRoute from "./protectedRoute";
 import Home from "@/Components/pages/Home";
 import ProductPage from "@/features/product/index";
 import ProductAddForm from "@/features/product/component/ProductAddForm";
+import ProductDetails from "@/features/product/component/productdetails";
 import OrderPage from "@/features/Order/index";
 import Sale from "@/Components/pages/Sale";
 import DemoPage from "@/Components/table/page";
@@ -31,6 +32,14 @@ const router = createBrowserRouter([
                 element: <ProductAddForm />
             },
             {
+                path: "editProduct/:id",
+                element: <ProductAddForm />
+            },
+            {
+                path: "product/:id",
+                element: <ProductDetails />
+            },
+            {
                 path: "order",
                 element: <OrderPage />
             }, {
@@ -46,6 +55,9 @@ const router = createBrowserRouter([
             },{
                 path:"neworder",
                 element:<OrderForm/>
+            },{
+                path:"/editProduct/:id",
+                element:<ProductAddForm/>
             }
         ]
 
@@ -68,4 +80,3 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
-

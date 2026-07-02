@@ -13,7 +13,6 @@ import { Button } from "@/Components/ui/button"
 import { Spinner } from "@/Components/ui/spinner"
 import { ImageIcon, UploadIcon, XIcon, ZoomInIcon } from 'lucide-react'
 import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider"
-import { cornersOfRectangle } from "@dnd-kit/core/dist/utilities/algorithms/helpers"
 
 interface GalleryUploadProps {
     maxFiles?: number
@@ -21,6 +20,7 @@ interface GalleryUploadProps {
     accept?: string
     multiple?: boolean
     className?: string
+    initialFiles?: FileMetadata[]
     onFilesChange?: (files: FileWithPreview[]) => void
 }
 
@@ -32,6 +32,7 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
         accept = "image/*",
         multiple = true,
         className,
+        initialFiles = [],
         onFilesChange }
     , ref
 ) => {
@@ -57,7 +58,7 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
         maxSize,
         accept,
         multiple,
-        initialFiles: [],
+        initialFiles,
         onFilesChange,
     })
 
@@ -81,7 +82,6 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
 
     return (
         <div className={cn("w-full max-w-4xl", className)}>
-            {/* Upload Area */}
             <div
                 className={cn(
                     "rounded-lg relative border border-dashed p-8 text-center transition-colors",
@@ -128,7 +128,6 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
                 </div>
             </div>
 
-            {/* Gallery Stats */}
             {files.length > 0 && (
                 <div className="mt-6 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -148,7 +147,6 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
                 </div>
             )}
 
-            {/* Image Grid */}
             {files.length > 0 && (
                 <div className="m-2 flex gap-2">
                     {files.map((fileItem) => (
@@ -186,9 +184,7 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
                                 </div>
                             )}
 
-                            {/* Overlay */}
                             <div className="bg-black/50 absolute inset-0 flex items-center justify-center gap-2 opacity-0 transition-opacity group-hover/item:opacity-100">
-                                {/* View Button */}
                                 {fileItem.preview && (
                                     <Button
                                         onClick={() => {
@@ -203,7 +199,6 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
                                     </Button>
                                 )}
 
-                                {/* Remove Button */}
                                 <Button
                                     onClick={() => removeFile(fileItem.id)}
                                     variant="secondary"
@@ -214,7 +209,6 @@ export const FilesUpload = forwardRef<FilesUploadRef, GalleryUploadProps>((
                                 </Button>
                             </div>
 
-                            {/* File Info */}
                             <div className="rounded-b-lg absolute right-0 bottom-0 left-0 bg-black/70 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100">
                                 <p className="truncate text-xs font-medium">
                                     {fileItem.file.name}

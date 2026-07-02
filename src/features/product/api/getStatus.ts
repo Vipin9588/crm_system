@@ -1,4 +1,4 @@
-import countDoc from "@/services/countDoc";
+import getProducts from "./getProducts";
 
 type CategoryType = {
   name: string;
@@ -22,7 +22,8 @@ const getProductstatus = async (
   userId: string
 ): Promise<Status | undefined> => {
   try {
-    const list = await countDoc<any>(userId, "Products");
+
+    const list = await getProducts(userId);
 
     const categoryMap: Record<string, number> = {};
     const monthMap: Record<string, number> = {};

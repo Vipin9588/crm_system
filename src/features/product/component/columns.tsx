@@ -11,7 +11,13 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import type { productDatatype } from "../productStructer";
 
-export const getColumns = (): ColumnDef<productDatatype>[] => [
+type ColumnActions = {
+    onView: (product: productDatatype) => void;
+    onEdit: (product: productDatatype) => void;
+    onDelete: (product: productDatatype) => void;
+}
+
+export const getColumns = ({ onView, onEdit, onDelete }: ColumnActions): ColumnDef<productDatatype>[] => [
     {
         accessorKey: "images",
         header: "Image",
@@ -72,9 +78,21 @@ export const getColumns = (): ColumnDef<productDatatype>[] => [
 
                         <DropdownMenuSeparator />
 
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {onEdit(product)
+
+                        }}>
+                            Edit
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem onClick={() => onDelete(product)}>
+                            Delete
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem onClick={() => {onView(product);
+                            console.log("View details clicked for product:", product)
+                        }}>
+                            View Details
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

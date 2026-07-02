@@ -20,7 +20,6 @@ import {
 export function ProductCards({status}:{status:Status}) {
   return (
     <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 p-4">
-      {/* Total Products */}
       <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
         <CardHeader>
           <CardDescription className="text-muted-foreground">
@@ -46,7 +45,6 @@ export function ProductCards({status}:{status:Status}) {
         </CardFooter>
       </Card>
 
-      {/* Categories */}
       <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
         <CardHeader>
           <CardDescription className="text-muted-foreground">
@@ -72,7 +70,6 @@ export function ProductCards({status}:{status:Status}) {
         </CardFooter>
       </Card>
 
-      {/* Low Stock */}
       <Card className="bg-card border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
         <CardHeader>
           <CardDescription className="text-muted-foreground">

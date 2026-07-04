@@ -10,7 +10,7 @@ import OrderPage from "@/features/Order/index";
 import Sale from "@/Components/pages/Sale";
 import DemoPage from "@/Components/table/page";
 import CustomerPage from "@/features/Customer";
-import AddCustomerForm from "@/features/Customer/components/NewCustomer";
+import CustomerForm from "@/features/Customer/components/NewCustomer";
 import OrderForm from "@/features/Order/components/OrderForm";
 
 const router = createBrowserRouter([
@@ -51,9 +51,15 @@ const router = createBrowserRouter([
                 element: <CustomerPage/>
             },{
                 path:"new/customer",
-                element:<AddCustomerForm/>
+                element:<CustomerForm/>
+            },{
+                path:"edit/customer/:id",
+                element:<CustomerForm/>
             },{
                 path:"neworder",
+                element:<OrderForm/>
+            },{
+                path:"editOrder/:id",
                 element:<OrderForm/>
             },{
                 path:"/editProduct/:id",

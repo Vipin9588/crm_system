@@ -8,6 +8,8 @@ import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { getCustomerStaus } from "./api/getCustomers";
+import { deleteCustomer } from "@/features/Customer/api/customerService";
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
 
 export default function CustomerPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -16,8 +18,9 @@ export default function CustomerPage() {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toastMessage } = useNotify();
 
-  function handleSelect(customer: Customer) {
+  function handleView(customer: Customer) {
     setSelectedCustomer(customer);
     setDrawerOpen(true);
   }
@@ -25,6 +28,28 @@ export default function CustomerPage() {
   function handleClose() {
     setDrawerOpen(false);
     setTimeout(() => setSelectedCustomer(null), 300);
+  }
+
+  function handleEdit(customer: Customer) {
+    navigate(`/edit/customer/${customer.customerId}`);
+  }
+
+  async function handleDeleteRequest(customer: Customer) {
+    if (!user?.uid) return;
+
+    const confirmed = window.confirm(
+      `Delete ${customer.name}? This will permanently remove their record. This action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteCustomer(user.uid, customer.customerId);
+      setCustomers((prev) => prev.filter((c) => c.customerId !== customer.customerId));
+      toastMessage(`${customer.name} was deleted.`, "success");
+    } catch (err) {
+      console.error("Failed to delete customer:", err);
+      toastMessage("Failed to delete customer. Please try again.", "error");
+    }
   }
 
   useEffect(() => {
@@ -52,7 +77,7 @@ export default function CustomerPage() {
     };
   }, [user?.uid]);
 
-  const columns = getColumns(handleSelect);
+  const columns = getColumns(handleView, handleEdit, handleDeleteRequest);
 
   return (
     <div className="flex flex-col w-full min-h-screen">

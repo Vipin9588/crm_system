@@ -76,7 +76,6 @@ export default function OrderListCard({
 
   return (
     <div className="flex h-full flex-col bg-card">
-      {/* Header */}
       <div className="sticky top-0 z-10 flex flex-col gap-3 border-b bg-card p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Orders</h2>

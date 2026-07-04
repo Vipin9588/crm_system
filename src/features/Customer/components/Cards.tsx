@@ -35,10 +35,6 @@ function isSameMonth(dateStr: string, ref: Date): boolean {
 
 function buildCards(customers: Customer[]): CardDef[] {
   const total = customers.length;
-
-  // No "status" field is currently saved on Customer records, so "active" here
-  // means "has placed at least one order" — the only real signal we have.
-  // Swap this for customer.status === "active" once that field is persisted.
   const withOrders = customers.filter((c) => (c.totalOrders ?? 0) > 0).length;
   const withoutOrders = total - withOrders;
 

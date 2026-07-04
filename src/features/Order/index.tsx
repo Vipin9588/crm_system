@@ -1,7 +1,10 @@
-
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
 import orderStatus, { type OrderStatus, type OrderItem } from "@/features/Order/api/orderStatus";
+import { deleteOrder } from "@/features/Order/api/orderService";
 import Cards from "@/features/Order/components/Cards";
 import OrderListCard, { type OrderObject } from "@/features/Order/components/OrderListCard";
 import OrderSummaryCard from "@/features/Order/components/OrderSummaryCard";
@@ -21,10 +24,13 @@ const EMPTY_STATUS: OrderStatus = {
 
 export default function OrdersDashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toastMessage } = useNotify();
 
   const [status, setStatus] = useState<OrderStatus>(EMPTY_STATUS);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<OrderObject | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
     if (!user?.uid) {
@@ -42,6 +48,32 @@ export default function OrdersDashboardPage() {
     loadOrders();
   }, [loadOrders]);
 
+  function handleEdit(order: OrderObject) {
+    navigate(`/editOrder/${order.orderId}`);
+  }
+
+  async function handleDelete(order: OrderObject) {
+    if (!user?.uid) return;
+
+    const confirmed = window.confirm(
+      `Delete order ${order.orderId}? This will permanently remove it. This action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    setDeletingId(order.orderId);
+    try {
+      await deleteOrder(user.uid, order.orderId);
+      toastMessage(`${order.orderId} was deleted.`, "success");
+      if (selected?.orderId === order.orderId) setSelected(null);
+      await loadOrders();
+    } catch (err) {
+      console.error("Failed to delete order:", err);
+      toastMessage("Failed to delete order. Please try again.", "error");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   const selectedItems: OrderItem[] =
     status.orders.find((o) => o.orderId === selected?.orderId)?.items ?? [];
 
@@ -58,6 +90,16 @@ export default function OrdersDashboardPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col gap-6 bg-background p-4 sm:p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-foreground">Orders</h1>
+        <button
+          onClick={() => navigate("/neworder")}
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 transition-opacity"
+        >
+          <Plus size={18} /> New Order
+        </button>
+      </div>
+
       <Cards status={status} loading={loading} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border bg-card p-5 shadow-sm">
@@ -93,7 +135,13 @@ export default function OrdersDashboardPage() {
           />
         </div>
 
-        <OrderSummaryCard showSummary={selected} items={selectedItems} />
+        <OrderSummaryCard
+          showSummary={selected}
+          items={selectedItems}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          deleting={deletingId === selected?.orderId}
+        />
       </div>
     </div>
   );

@@ -1,9 +1,12 @@
-import { useState, useRef, useCallback, useMemo, memo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect, memo } from "react";
 import { useFormik } from "formik";
 import { UserCircle2, Upload, X, Plus, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { uploadImageToCloudinary } from "@/services/cloudnairy";
 import { AddToCollection } from "@/services/userService";
+import { getCustomerById, updateCustomer } from "@/features/Customer/api/customerService";
+import type { Customer } from "../types";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -95,7 +98,15 @@ export const Field = memo(
 );
 Field.displayName = "Field";
 
-export default function AddCustomerForm() {
+export default function CustomerForm() {
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+  const navigate = useNavigate();
+
+  const [existingCustomer, setExistingCustomer] = useState<Customer | null>(null);
+  const [loadingExisting, setLoadingExisting] = useState(isEditMode);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const [submitted, setSubmitted] = useState(false);
   const [socialInput, setSocialInput] = useState("");
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
@@ -105,11 +116,52 @@ export default function AddCustomerForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
-  // Stable across the component's life so it doesn't change if `user` loads later.
   const customerId = useMemo(() => generateCustomerId(), []);
 
-  const initialValues = useMemo<FormValues>(
-    () => ({
+  useEffect(() => {
+    if (!isEditMode || !user?.uid || !id) return;
+
+    let cancelled = false;
+    setLoadingExisting(true);
+    setLoadError(null);
+
+    (async () => {
+      try {
+        const customer = await getCustomerById(user.uid, id);
+        if (cancelled) return;
+        if (!customer) {
+          setLoadError("Customer not found.");
+        } else {
+          setExistingCustomer(customer);
+          if (customer.pic) setProfilePreview(customer.pic);
+        }
+      } catch (err) {
+        console.error("Failed to load customer:", err);
+        if (!cancelled) setLoadError("Failed to load customer.");
+      } finally {
+        if (!cancelled) setLoadingExisting(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isEditMode, user?.uid, id]);
+
+  const initialValues = useMemo<FormValues>(() => {
+    if (isEditMode && existingCustomer) {
+      return {
+        name: existingCustomer.name,
+        email: existingCustomer.email,
+        contact: existingCustomer.contact,
+        pic: null,
+        customerId: existingCustomer.customerId,
+        userId: existingCustomer.userId,
+        socialLink: existingCustomer.socialLink ?? [],
+        createdAt: existingCustomer.createdAt,
+      };
+    }
+    return {
       name: "",
       email: "",
       contact: "",
@@ -118,9 +170,8 @@ export default function AddCustomerForm() {
       userId: user?.uid || "",
       socialLink: [],
       createdAt: new Date().toISOString(),
-    }),
-    [customerId, user?.uid]
-  );
+    };
+  }, [customerId, user?.uid, isEditMode, existingCustomer]);
 
   const formik = useFormik<FormValues>({
     initialValues,
@@ -128,41 +179,43 @@ export default function AddCustomerForm() {
     validate,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
-        const payload = new FormData();
-        payload.append("name", values.name.trim());
-        payload.append("email", values.email.trim());
-        payload.append("contact", values.contact.trim());
-        payload.append("customerId", values.customerId);
-        payload.append("userId", values.userId);
-        payload.append("createdAt", values.createdAt);
-        payload.append("socialLink", JSON.stringify(values.socialLink));
+        let picUrl = existingCustomer?.pic ?? "";
         if (values.pic) {
-          const profilePic = await uploadImageToCloudinary(values.pic);
+          picUrl = await uploadImageToCloudinary(values.pic);
+        }
 
-          console.log("Cloudinary URL:", profilePic);
+        const customerData = {
+          name: values.name.trim(),
+          email: values.email.trim(),
+          contact: values.contact.trim(),
+          customerId: values.customerId,
+          userId: values.userId,
+          createdAt: values.createdAt,
+          socialLink: values.socialLink,
+          pic: picUrl,
+        };
 
-          const customerData = {
-            ...values,
-            pic: profilePic,
-          };
-
-          console.log("Data saving:", customerData);
-
+        if (isEditMode) {
+          await updateCustomer(values.userId, values.customerId, customerData);
+        } else {
           await AddToCollection("Customers", customerData);
         }
-  
 
         setSubmitted(true);
         setTimeout(() => {
           setSubmitted(false);
-          resetForm();
-          setSocialInput("");
-          setProfilePreview(null);
-          setProfileFile(null);
-          setFileError(null);
+          if (isEditMode) {
+            navigate("/customer");
+          } else {
+            resetForm();
+            setSocialInput("");
+            setProfilePreview(null);
+            setProfileFile(null);
+            setFileError(null);
+          }
         }, 1500);
       } catch (err) {
-        console.error("Failed to save customer:", err);
+        console.error(`Failed to ${isEditMode ? "update" : "save"} customer:`, err);
       } finally {
         setSubmitting(false);
       }
@@ -224,11 +277,44 @@ export default function AddCustomerForm() {
   const handleReset = () => {
     formik.resetForm();
     setSocialInput("");
-    setProfilePreview(null);
+    setProfilePreview(existingCustomer?.pic ?? null);
     setProfileFile(null);
     setFileError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  if (isEditMode && loadingExisting) {
+    return (
+      <div className="min-h-screen bg-background px-4 py-8">
+        <div className="mx-auto w-full max-w-2xl">
+          <div className="flex flex-col gap-3">
+            <div className="h-8 w-40 animate-pulse rounded-md bg-muted" />
+            <div className="h-64 animate-pulse rounded-xl bg-muted" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isEditMode && loadError) {
+    return (
+      <div className="min-h-screen bg-background px-4 py-8">
+        <div className="mx-auto w-full max-w-2xl">
+          <button
+            type="button"
+            onClick={() => navigate("/customer")}
+            className="mb-5 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={15} />
+            Back to Customers
+          </button>
+          <div className="rounded-xl border border-border bg-card p-6 text-sm text-danger">
+            {loadError}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">
@@ -244,14 +330,17 @@ export default function AddCustomerForm() {
 
         <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
           <div className="border-b border-border bg-muted/40 px-6 py-5">
-            <h1 className="text-lg font-bold text-foreground">Add New Customer</h1>
+            <h1 className="text-lg font-bold text-foreground">
+              {isEditMode ? "Edit Customer" : "Add New Customer"}
+            </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Fill in the details below to create a customer record.
+              {isEditMode
+                ? "Update this customer's details below."
+                : "Fill in the details below to create a customer record."}
             </p>
           </div>
 
           <form onSubmit={formik.handleSubmit} className="px-6 py-6 flex flex-col gap-6">
-            {/* Profile picture */}
             <div className="flex flex-col gap-2">
               <span className="text-xs font-semibold uppercase tracking-wide text-foreground/60">
                 Profile Picture
@@ -337,7 +426,6 @@ export default function AddCustomerForm() {
 
             <div className="border-t border-border" />
 
-            {/* Core fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field formik={formik} label="Full Name" name="name" placeholder="e.g. Jolly" />
               <Field
@@ -391,7 +479,6 @@ export default function AddCustomerForm() {
               </div>
             </div>
 
-            {/* Social links */}
             <div className="flex flex-col gap-2">
               <label className="text-xs font-semibold uppercase tracking-wide text-foreground/60">
                 Social Links
@@ -442,7 +529,6 @@ export default function AddCustomerForm() {
               )}
             </div>
 
-            {/* Actions */}
             <div className="flex items-center justify-between pt-2 border-t border-border">
               <button
                 type="button"
@@ -466,10 +552,12 @@ export default function AddCustomerForm() {
                 {submitted ? (
                   <>
                     <CheckCircle2 size={15} />
-                    Saved!
+                    {isEditMode ? "Updated!" : "Saved!"}
                   </>
                 ) : formik.isSubmitting ? (
                   "Saving..."
+                ) : isEditMode ? (
+                  "Update Customer"
                 ) : (
                   "Save Customer"
                 )}

@@ -4,6 +4,9 @@ import type { OrderItem } from "@/features/Order/api/orderStatus";
 type OrderProps = {
   showSummary: OrderObject | null;
   items?: OrderItem[];
+  onEdit?: (order: OrderObject) => void;
+  onDelete?: (order: OrderObject) => void;
+  deleting?: boolean;
 };
 
 function formatCurrency(n: number): string {
@@ -14,7 +17,75 @@ function formatCurrency(n: number): string {
   }).format(n);
 }
 
-export default function OrderSummaryCard({ showSummary, items = [] }: OrderProps) {
+function buildInvoiceHtml(order: OrderObject, items: OrderItem[]): string {
+  const subtotal = items.length ? items.reduce((sum, i) => sum + i.price * i.quantity, 0) : order.total;
+
+  const rows = items
+    .map(
+      (i) => `
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5;">${i.name}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5;text-align:center;">${i.quantity}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5;text-align:right;">${formatCurrency(i.price)}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e5e5;text-align:right;">${formatCurrency(i.price * i.quantity)}</td>
+        </tr>`
+    )
+    .join("");
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Invoice ${order.orderId}</title>
+        <style>
+          body { font-family: Arial, sans-serif; color: #1a1a1a; padding: 32px; }
+          h1 { font-size: 20px; margin-bottom: 4px; }
+          .muted { color: #666; font-size: 13px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+          th { text-align: left; padding: 8px; border-bottom: 2px solid #1a1a1a; font-size: 12px; text-transform: uppercase; }
+          .totals { margin-top: 16px; width: 100%; max-width: 260px; margin-left: auto; }
+          .totals div { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+          .totals .grand { font-weight: bold; font-size: 16px; border-top: 1px solid #1a1a1a; padding-top: 8px; margin-top: 8px; }
+        </style>
+      </head>
+      <body>
+        <h1>Invoice — ${order.orderId}</h1>
+        <p class="muted">Date: ${order.date} &nbsp;·&nbsp; Status: ${order.status}</p>
+        <p class="muted">Billed to: ${order.customer}</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th style="text-align:center;">Qty</th>
+              <th style="text-align:right;">Price</th>
+              <th style="text-align:right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows || `<tr><td colspan="4" style="padding:8px;color:#666;">No item details available.</td></tr>`}
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <div><span>Subtotal</span><span>${formatCurrency(subtotal)}</span></div>
+          <div><span>Shipping</span><span>${formatCurrency(0)}</span></div>
+          <div><span>Tax</span><span>${formatCurrency(0)}</span></div>
+          <div class="grand"><span>Total</span><span>${formatCurrency(order.total)}</span></div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+export default function OrderSummaryCard({
+  showSummary,
+  items = [],
+  onEdit,
+  onDelete,
+  deleting = false,
+}: OrderProps) {
   if (!showSummary) {
     return (
       <div className="flex h-full items-center justify-center bg-card p-6 text-center">
@@ -27,9 +98,20 @@ export default function OrderSummaryCard({ showSummary, items = [] }: OrderProps
     ? items.reduce((sum, i) => sum + i.price * i.quantity, 0)
     : showSummary.total;
 
+  function handlePrint() {
+    if (!showSummary) return;
+    const printWindow = window.open("", "_blank", "width=800,height=900");
+    if (!printWindow) return;
+    printWindow.document.write(buildInvoiceHtml(showSummary, items));
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  }
+
   return (
     <div className="h-full bg-card overflow-y-auto">
-      {/* Header */}
       <div className="sticky top-0 z-10 border-b bg-card p-6 w-full">
         <div className="flex items-start justify-between">
           <div>
@@ -46,7 +128,6 @@ export default function OrderSummaryCard({ showSummary, items = [] }: OrderProps
       </div>
 
       <div className="space-y-5 p-6">
-        {/* Customer Card */}
         <div className="rounded-2xl border bg-card p-5 shadow-sm">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Customer Information
@@ -147,13 +228,30 @@ export default function OrderSummaryCard({ showSummary, items = [] }: OrderProps
           </div>
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <button className="flex-1 rounded-xl border px-4 py-3 font-medium transition hover:bg-muted">
+        <div className="flex flex-wrap gap-3 pt-2">
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="flex-1 rounded-xl border px-4 py-3 font-medium transition hover:bg-muted"
+          >
             Print Invoice
           </button>
 
-          <button className="flex-1 rounded-xl bg-primary px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90">
-            Update Status
+          <button
+            type="button"
+            onClick={() => onEdit?.(showSummary)}
+            className="flex-1 rounded-xl bg-primary px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90"
+          >
+            Edit Order
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onDelete?.(showSummary)}
+            disabled={deleting}
+            className="flex-1 rounded-xl border border-destructive px-4 py-3 font-medium text-destructive transition hover:bg-destructive/10 disabled:opacity-50"
+          >
+            {deleting ? "Deleting…" : "Delete Order"}
           </button>
         </div>
       </div>

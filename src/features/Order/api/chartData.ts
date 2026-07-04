@@ -1,4 +1,4 @@
-import type { Order } from "@/services/orderStatus";
+import type { Order } from "@/features/Order/api/orderStatus";
 
 export interface StatusSlice {
   status: string;
@@ -18,7 +18,6 @@ const STATUS_LABELS: Record<Order["status"], string> = {
   cancelled: "Cancelled",
 };
 
-/** One slice per status, only including statuses that actually have orders. */
 export function toStatusSlices(orders: Order[]): StatusSlice[] {
   const counts: Record<string, number> = {};
   for (const o of orders) {
@@ -29,10 +28,7 @@ export function toStatusSlices(orders: Order[]): StatusSlice[] {
     .sort((a, b) => b.count - a.count);
 }
 
-/**
- * Revenue from delivered orders, grouped by month, for the last `monthsBack` months
- * (including the current month), oldest first.
- */
+
 export function toMonthlyRevenue(orders: Order[], monthsBack = 6): MonthRevenue[] {
   const now = new Date();
   const buckets: MonthRevenue[] = [];

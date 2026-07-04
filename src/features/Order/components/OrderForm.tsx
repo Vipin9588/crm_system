@@ -1,5 +1,6 @@
 import { useState, useMemo, type ComponentType, type ReactNode, useEffect } from "react";
 import { useFormik, type FormikErrors, type FormikTouched } from "formik";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -17,6 +18,8 @@ import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { AddToCollection } from "@/services/userService";
 import countDoc from "@/services/countDoc";
+import { getOrderById, updateOrder } from "@/features/Order/api/orderService";
+import type { Order } from "@/features/Order/api/orderStatus";
 
 interface Customer {
   id: string;
@@ -33,7 +36,7 @@ interface Product {
 }
 
 interface StatusOption {
-  value: string;
+  value: Order["status"];
   label: string;
   dot: string;
 }
@@ -51,7 +54,7 @@ interface OrderFormValues {
   orderId: string;
   createdAt: string;
   customerId: string;
-  status: string;
+  status: Order["status"];
   deliveryDate: string;
   items: OrderItem[];
 }
@@ -104,7 +107,7 @@ function initials(name: string): string {
 
 type OrderFormErrors = Partial<Record<keyof OrderFormValues, string>>;
 
-function validateOrderForm(values: OrderFormValues): OrderFormErrors {
+function validateOrderForm(values: OrderFormValues, isEditMode: boolean): OrderFormErrors {
   const errors: OrderFormErrors = {};
 
   if (!values.customerId) {
@@ -117,7 +120,9 @@ function validateOrderForm(values: OrderFormValues): OrderFormErrors {
 
   if (!values.deliveryDate) {
     errors.deliveryDate = "Pick a delivery date";
-  } else if (values.deliveryDate < todayISODate()) {
+  } else if (!isEditMode && values.deliveryDate < todayISODate()) {
+    // Only enforce "not in the past" for brand new orders; an existing
+    // order's delivery date may legitimately already be in the past.
     errors.deliveryDate = "Delivery date can't be before today";
   }
 
@@ -204,6 +209,15 @@ function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps
     };
   }, [user?.uid]);
 
+  // If a customerId was set before this list finished loading (edit mode
+  // pre-fill), let the parent know the full customer record once we have it.
+  useEffect(() => {
+    if (!value || customers.length === 0) return;
+    const match = customers.find((c) => c.id === value);
+    if (match) onChange(value, match);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customers, value]);
+
   const selected = customers.find((c) => c.id === value);
 
   const filtered = useMemo(() => {
@@ -235,6 +249,8 @@ function CustomerPicker({ value, onChange, error, touched }: CustomerPickerProps
                 <span className="ml-1.5 text-muted-foreground">{selected.email}</span>
               </span>
             </span>
+          ) : value ? (
+            <span className="text-muted-foreground">Loading customer…</span>
           ) : (
             <span className="text-muted-foreground">
               {loading ? "Loading customers…" : "Search or select a customer…"}
@@ -416,8 +432,8 @@ function ProductSearch({ excludeIds, onAdd }: ProductSearchProps) {
 }
 
 interface StatusSelectProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: Order["status"];
+  onChange: (value: Order["status"]) => void;
   error?: string;
   touched?: boolean;
 }
@@ -482,14 +498,80 @@ function StatusSelect({ value, onChange, error, touched }: StatusSelectProps) {
 }
 
 export default function OrderForm() {
-  const [orderId] = useState<string>(generateOrderId);
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+  const navigate = useNavigate();
+
+  const [orderId] = useState<string>(() => (isEditMode && id ? id : generateOrderId()));
   const [createdAt] = useState<string>(nowISOLocal);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined);
   const { user } = useAuth();
   const { toastMessage } = useNotify();
 
-  const formik = useFormik<OrderFormValues>({
-    initialValues: {
+  const [existingOrder, setExistingOrder] = useState<{
+    createdAt: string;
+    customerId: string;
+    deliveryDate: string;
+    status: Order["status"];
+    items: OrderItem[];
+  } | null>(null);
+  const [loadingExisting, setLoadingExisting] = useState(isEditMode);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isEditMode || !user?.uid || !id) return;
+
+    let cancelled = false;
+    setLoadingExisting(true);
+    setLoadError(null);
+
+    (async () => {
+      try {
+        const order = await getOrderById(user.uid, id);
+        if (cancelled) return;
+        if (!order) {
+          setLoadError("Order not found.");
+        } else {
+          setExistingOrder({
+            createdAt: order.createdAt,
+            customerId: order.customerId,
+            deliveryDate: order.deliveryDate,
+            status: order.status,
+            items: order.items.map((i) => ({
+              productId: i.productId,
+              name: i.name,
+              sku: "—",
+              price: i.price,
+              quantity: i.quantity,
+            })),
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load order:", err);
+        if (!cancelled) setLoadError("Failed to load order.");
+      } finally {
+        if (!cancelled) setLoadingExisting(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isEditMode, user?.uid, id]);
+
+  const initialValues = useMemo<OrderFormValues>(() => {
+    if (isEditMode && existingOrder) {
+      return {
+        userId: user?.uid ?? "",
+        orderId,
+        createdAt: existingOrder.createdAt,
+        customerId: existingOrder.customerId,
+        status: existingOrder.status,
+        deliveryDate: existingOrder.deliveryDate,
+        items: existingOrder.items,
+      };
+    }
+    return {
       userId: user?.uid ?? "",
       orderId,
       createdAt,
@@ -497,30 +579,40 @@ export default function OrderForm() {
       status: "pending",
       deliveryDate: "",
       items: [],
-    },
-    enableReinitialize: false,
-    validate: validateOrderForm,
+    };
+  }, [orderId, createdAt, user?.uid, isEditMode, existingOrder]);
+
+  const formik = useFormik<OrderFormValues>({
+    initialValues,
+    enableReinitialize: true,
+    validate: (values) => validateOrderForm(values, isEditMode),
     onSubmit: async (values, helpers) => {
       if (!user?.uid) {
-        toastMessage("You must be signed in to create an order", "error");
+        toastMessage("You must be signed in to save an order", "error");
         return;
       }
       const total = values.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       const payload: SubmittedOrder = { ...values, userId: user.uid, total };
 
       try {
-        await AddToCollection("Orders", payload);
-        toastMessage(
-          `${values.orderId} created with ${values.items.length} item(s), total ${formatCurrency(
-            payload.total
-          )}`,
-          "success"
-        );
-        helpers.resetForm();
-        setSelectedCustomer(undefined);
+        if (isEditMode) {
+          await updateOrder(user.uid, values.orderId, payload);
+          toastMessage(`${values.orderId} updated.`, "success");
+          navigate("/order");
+        } else {
+          await AddToCollection("Orders", payload);
+          toastMessage(
+            `${values.orderId} created with ${values.items.length} item(s), total ${formatCurrency(
+              payload.total
+            )}`,
+            "success"
+          );
+          helpers.resetForm();
+          setSelectedCustomer(undefined);
+        }
       } catch (err) {
-        console.error("Failed to create order", err);
-        toastMessage("Couldn't create the order. Please try again.", "error");
+        console.error(`Failed to ${isEditMode ? "update" : "create"} order`, err);
+        toastMessage(`Couldn't ${isEditMode ? "update" : "create"} the order. Please try again.`, "error");
       }
     },
   });
@@ -561,7 +653,37 @@ export default function OrderForm() {
   if (!user) {
     return (
       <div className="flex min-h-full w-full items-center justify-center bg-background p-8">
-        <p className="text-sm text-muted-foreground">Sign in to create an order.</p>
+        <p className="text-sm text-muted-foreground">Sign in to manage orders.</p>
+      </div>
+    );
+  }
+
+  if (isEditMode && loadingExisting) {
+    return (
+      <div className="min-h-full w-full bg-background p-4 sm:p-8">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+          <div className="h-8 w-40 animate-pulse rounded-md bg-muted" />
+          <div className="h-96 animate-pulse rounded-2xl bg-muted" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isEditMode && loadError) {
+    return (
+      <div className="min-h-full w-full bg-background p-4 sm:p-8">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+          <button
+            type="button"
+            onClick={() => navigate("/order")}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            ← Back to Orders
+          </button>
+          <div className="rounded-2xl border border-border bg-card p-6 text-sm text-destructive">
+            {loadError}
+          </div>
+        </div>
       </div>
     );
   }
@@ -575,14 +697,16 @@ export default function OrderForm() {
               className="font-semibold text-foreground"
               style={{ fontSize: "var(--font-lg)" }}
             >
-              New Order
+              {isEditMode ? "Edit Order" : "New Order"}
             </h1>
             <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-              Draft
+              {isEditMode ? values.status : "Draft"}
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Fill in customer and product details to create an order.
+            {isEditMode
+              ? "Update the customer, status, delivery date, or products for this order."
+              : "Fill in customer and product details to create an order."}
           </p>
 
           <div className="mt-4 grid grid-cols-2 gap-4 rounded-md border border-border bg-muted/40 p-3 sm:grid-cols-2">
@@ -645,7 +769,7 @@ export default function OrderForm() {
             <input
               id="deliveryDate"
               type="date"
-              min={todayISODate()}
+              min={isEditMode ? undefined : todayISODate()}
               value={values.deliveryDate}
               onChange={(e) => setFieldValue("deliveryDate", e.target.value)}
               onBlur={() => setFieldTouched("deliveryDate", true)}
@@ -760,19 +884,29 @@ export default function OrderForm() {
           <button
             type="button"
             onClick={() => {
-              formik.resetForm();
-              setSelectedCustomer(undefined);
+              if (isEditMode) {
+                navigate("/order");
+              } else {
+                formik.resetForm();
+                setSelectedCustomer(undefined);
+              }
             }}
             className="rounded-md px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary"
           >
-            Reset
+            {isEditMode ? "Cancel" : "Reset"}
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
             className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {isSubmitting ? "Creating order…" : "Create order"}
+            {isSubmitting
+              ? isEditMode
+                ? "Saving…"
+                : "Creating order…"
+              : isEditMode
+              ? "Save changes"
+              : "Create order"}
           </button>
         </div>
       </form>

@@ -18,7 +18,9 @@ function formatDate(iso: string): string {
 }
 
 export const getColumns = (
-  handleSelect: (customer: Customer) => void
+  handleView: (customer: Customer) => void,
+  handleEdit: (customer: Customer) => void,
+  handleDelete: (customer: Customer) => void
 ): ColumnDef<Customer>[] => [
   {
     accessorKey: "customerId",
@@ -31,7 +33,7 @@ export const getColumns = (
       <button
         className="hover:text-primary hover:underline"
         onClick={() => {
-          handleSelect(row.original);
+          handleView(row.original);
         }}
       >
         {row.original.name}
@@ -75,11 +77,20 @@ export const getColumns = (
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleView(customer)}>
+              View Profile
+            </DropdownMenuItem>
 
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEdit(customer)}>
+              Edit
+            </DropdownMenuItem>
 
-            <DropdownMenuItem>View Profile</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleDelete(customer)}
+              className="text-danger focus:text-danger"
+            >
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

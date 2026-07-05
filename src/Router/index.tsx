@@ -12,7 +12,7 @@ import DemoPage from "@/Components/table/page";
 import CustomerPage from "@/features/Customer";
 import CustomerForm from "@/features/Customer/components/NewCustomer";
 import OrderForm from "@/features/Order/components/OrderForm";
-
+import Dashboard from "@/features/Dashboard";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <DemoPage />
+                element: <Dashboard/>
             }, {
                 path: "products",
                 element: <ProductPage />

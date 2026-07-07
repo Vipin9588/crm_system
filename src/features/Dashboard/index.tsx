@@ -88,14 +88,9 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 bg-background p-6 text-foreground">
-      {/* Header */}
-
       <div className="flex flex-wrap items-center justify-between gap-4">
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Dashboard
-          </h1>
 
           <p className="mt-1 text-sm text-muted-foreground">
             Live overview of your store's performance
@@ -125,7 +120,6 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Statistics */}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
@@ -159,10 +153,8 @@ export default function Dashboard() {
           tone="danger"
         />
       </div>
-            {/* Charts Section */}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Revenue Trend */}
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <div className="mb-5">
@@ -178,7 +170,6 @@ export default function Dashboard() {
           <RevenueTrendChart data={data.monthlyRevenue} />
         </div>
 
-        {/* Products Added */}
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <div className="mb-5">
@@ -197,7 +188,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Pie Charts */}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
@@ -222,7 +212,6 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Tables */}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
 

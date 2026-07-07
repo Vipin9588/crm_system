@@ -82,7 +82,6 @@ export default function CustomerPage() {
   return (
     <div className="flex flex-col w-full min-h-screen">
       <div className="flex justify-between items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
-        <h1 className="text-xl font-semibold text-foreground">Customers</h1>
         <button
           onClick={() => navigate("/new/customer")}
           className="flex items-center px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"

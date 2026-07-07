@@ -7,12 +7,11 @@ import ProductPage from "@/features/product/index";
 import ProductAddForm from "@/features/product/component/ProductAddForm";
 import ProductDetails from "@/features/product/component/productdetails";
 import OrderPage from "@/features/Order/index";
-import Sale from "@/Components/pages/Sale";
-import DemoPage from "@/Components/table/page";
 import CustomerPage from "@/features/Customer";
 import CustomerForm from "@/features/Customer/components/NewCustomer";
 import OrderForm from "@/features/Order/components/OrderForm";
 import Dashboard from "@/features/Dashboard";
+import SalesPage from "@/features/sales";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -42,9 +41,6 @@ const router = createBrowserRouter([
             {
                 path: "order",
                 element: <OrderPage />
-            }, {
-                path: "sales",
-                element: <Sale />
             },
             {
                 path: "customer",
@@ -64,6 +60,9 @@ const router = createBrowserRouter([
             },{
                 path:"/editProduct/:id",
                 element:<ProductAddForm/>
+            },{
+                path:"/sales",
+                element:<SalesPage/>
             }
         ]
 

@@ -1,7 +1,6 @@
-"use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/Context/Authcontext/AuthProvider"; // swap for your actual auth hook
+import { useAuth } from "@/Context/Authcontext/AuthProvider"; 
 import { getSalesData, type SalesData } from "./api/getSalesData";
 import { SalesStatsGrid } from "./components/SalesStatsGrid";
 import { RevenueTrendChart } from "./components/RevenueTrendChart";

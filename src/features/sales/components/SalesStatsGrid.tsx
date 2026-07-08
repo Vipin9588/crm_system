@@ -1,4 +1,4 @@
-import { IndianRupee, Receipt, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { IndianRupee, TrendingUp, TrendingDown, Wallet,Package  } from "lucide-react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { formatCurrency } from "../utils/format";
 import type { SalesData } from "../api/getSalesData";
@@ -56,7 +56,7 @@ export function SalesStatsGrid({ data }: { data: SalesData }) {
       <StatCard
         label="Total Orders"
         value={data.totalOrders.toLocaleString("en-IN")}
-        icon={<Receipt className="h-5 w-5" />}
+        icon={<Package   className="h-5 w-5" />}
       />
       <StatCard
         label="Avg. Order Value"

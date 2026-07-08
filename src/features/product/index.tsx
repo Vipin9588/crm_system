@@ -10,6 +10,7 @@ import getProductStats, { Status } from './api/getStatus';
 import { useNotify } from '@/Context/NotifyContext/NotifyContextProvider';
 import deleteProduct from './api/deleteProducts';
 import type { productDatatype } from './productStructer';
+import { Plus } from 'lucide-react';
 
 export default function ProductPage() {
     const [status, setStatus] = useState<Status>({
@@ -96,6 +97,9 @@ export default function ProductPage() {
 
     return (
         <div>
+            <div className='flex justify-end'><button className='border flex rounded-sm mt-2 gap-1 bg-primary p-2 mr-4'
+             onClick={()=>navigate('/addProduct')}
+            ><Plus/>Add</button></div>
             <ProductCards status={status} />
             <div className="grid gap-4 lg:grid-cols-[64%_34%] p-4">
                 <div className="p-2 border border-accent rounded-md">

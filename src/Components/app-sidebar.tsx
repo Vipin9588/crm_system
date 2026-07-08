@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/Components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import { LayoutDashboardIcon, ListIcon, ChartBarIcon, Box ,ShoppingCart , UsersIcon, BadgeIndianRupee , Settings2Icon, CircleHelpIcon, SearchIcon, CommandIcon } from "lucide-react"
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 
 const data = {
@@ -33,23 +33,16 @@ const data = {
       title: "Products",
       url: "/products",
       icon: (
-        <ListIcon
+        <Box
         />
       ),
     },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: (
-        <ChartBarIcon
-        />
-      ),
-    },
+  
     {
       title: "Order",
       url: "/order",
       icon: (
-        <FolderIcon
+        <ShoppingCart 
         />
       ),
     },
@@ -65,7 +58,7 @@ const data = {
       title: "Sales",
       url: "/sales",
       icon: (
-        <UsersIcon
+        <BadgeIndianRupee 
         />
       ),
     }

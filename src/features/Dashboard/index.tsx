@@ -11,6 +11,7 @@ import LowStockTable from "./components/LowStockTable";
 
 import ReusableLineChart from "@/Components/chart/AreaChart";
 import CustomPieChart from "@/Components/chart/PieChart";
+import { IndianRupee ,ScrollText,PackageSearch ,Users   } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -126,7 +127,7 @@ export default function Dashboard() {
         <StatCard
           label="Total Revenue"
           value={`₹${data.totalRevenue.toLocaleString("en-IN")}`}
-          icon="💰"
+          icon={<IndianRupee />}
           tone="success"
           hint="From delivered orders"
         />
@@ -134,14 +135,14 @@ export default function Dashboard() {
         <StatCard
           label="Total Orders"
           value={data.totalOrders}
-          icon="🧾"
+          icon={<ScrollText />}
           tone="primary"
         />
 
         <StatCard
           label="Total Products"
           value={data.productStatus.totalProducts}
-          icon="📦"
+          icon={<PackageSearch />}
           tone="warning"
           hint={`${data.productStatus.lowStock} low on stock`}
         />
@@ -149,7 +150,7 @@ export default function Dashboard() {
         <StatCard
           label="Total Customers"
           value={data.customerCount}
-          icon="👥"
+          icon={<Users />}
           tone="danger"
         />
       </div>

@@ -10,6 +10,7 @@ import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import { getCustomerStaus } from "./api/getCustomers";
 import { deleteCustomer } from "@/features/Customer/api/customerService";
 import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
+import { Plus } from 'lucide-react';
 
 export default function CustomerPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -81,12 +82,12 @@ export default function CustomerPage() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <div className="flex justify-between items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
+      <div className="flex justify-end items-center flex-wrap gap-2 px-4 py-3 border-b border-border">
         <button
           onClick={() => navigate("/new/customer")}
-          className="flex items-center px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+          className="flex items-center px-4 py-2 text-sm bg-primary text-primary-foreground rounded-sm hover:opacity-90 transition-opacity"
         >
-          <IoIosAdd size={26} /> Add Customer
+          <Plus/> Add Customer
         </button>
       </div>
 

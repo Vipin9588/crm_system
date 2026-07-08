@@ -7,9 +7,14 @@ import router from './Router';
 import { Toaster } from 'sonner';
 import { TooltipProvider } from "@/Components/ui/tooltip";
 import NotifyContextProvider from '@/Context/NotifyContext/NotifyContextProvider';
+import { ThemeProvider } from '@/Context/ThemeContext/ThemeContext';
+
+
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <TooltipProvider >
+    <ThemeProvider>
+       <TooltipProvider >
       <NotifyContextProvider>
          <AuthProvider>
         <Toaster/>
@@ -17,5 +22,6 @@ createRoot(document.getElementById('root')!).render(
       </AuthProvider>
       </NotifyContextProvider>
     </TooltipProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

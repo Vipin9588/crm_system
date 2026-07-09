@@ -1,6 +1,5 @@
 import { FormField } from "@/features/product/Dynamic-form/form";
 
-// product categories
 
 export const productCategories: string[] = [
     "Electronics",

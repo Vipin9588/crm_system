@@ -15,11 +15,7 @@ import { LayoutDashboardIcon, ListIcon, ChartBarIcon, Box ,ShoppingCart , UsersI
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 
 const data = {
-  user2: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+
   navMain: [
     {
       title: "Dashboard",
@@ -104,9 +100,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="#">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+              <a>
+                <CommandIcon className="size-6! text-primary" />
+                <span className="text-lg font-semibold">FlowWork</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

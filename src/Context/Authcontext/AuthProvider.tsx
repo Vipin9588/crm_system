@@ -18,19 +18,23 @@ import { auth } from "@/config/firebase";
 type Props = {
   children: React.ReactNode;
 };
+
 const provider = new GoogleAuthProvider();
+
 export default function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   // SIGNUP
-  const signUp = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+  const signUp = async (
+    email: string,
+    password: string
+  ): Promise<UserCredential> => {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    return result;
   };
 
-  // GOOGLESIGNIN
-
-  // const auth = getAuth();
+  // GOOGLE SIGN IN
   const googleSignIn = async (): Promise<UserCredential> => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -44,14 +48,14 @@ export default function AuthProvider({ children }: Props) {
   // LOGIN
   const login = async (
     email: string,
-    password: string,
+    password: string
   ): Promise<UserCredential> => {
     const result = await signInWithEmailAndPassword(auth, email, password);
     return result;
   };
 
   // LOGOUT
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     await signOut(auth);
   };
 
@@ -59,16 +63,14 @@ export default function AuthProvider({ children }: Props) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-
       setLoading(false);
     });
     return unsubscribe;
   }, []);
 
   // GET GOOGLE USER INFO
-
   const getGoogleUserInfo = (
-    result: UserCredential,
+    result: UserCredential
   ): AdditionalUserInfo | null => {
     const additionalUserInfo = getAdditionalUserInfo(result);
     return additionalUserInfo;

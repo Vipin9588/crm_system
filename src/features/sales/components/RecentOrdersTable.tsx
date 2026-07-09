@@ -5,8 +5,8 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/Components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/Components/ui/card";
+} from "@/components/ui/table";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "../utils/format";
 import type { Order } from "@/features/Order/api/orderStatus";
 

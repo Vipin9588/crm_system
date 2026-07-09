@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/Components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useLocation } from "react-router-dom";
 
 export function SiteHeader() {

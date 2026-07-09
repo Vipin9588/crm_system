@@ -9,8 +9,8 @@ import RevenueTrendChart from "./components/RevenueTrendChart";
 import RecentOrdersTable from "./components/RecentOrdersTable";
 import LowStockTable from "./components/LowStockTable";
 
-import ReusableLineChart from "@/Components/chart/AreaChart";
-import CustomPieChart from "@/Components/chart/PieChart";
+import ReusableLineChart from "@/components/chart/AreaChart";
+import CustomPieChart from "@/components/chart/PieChart";
 import { IndianRupee ,ScrollText,PackageSearch ,Users   } from 'lucide-react';
 
 export default function Dashboard() {

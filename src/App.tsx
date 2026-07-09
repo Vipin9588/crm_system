@@ -1,4 +1,4 @@
-import Login from "./Components/Auth/Login";
+import Login from "./components/Auth/Login";
 
 export default function App() {
   return <div>

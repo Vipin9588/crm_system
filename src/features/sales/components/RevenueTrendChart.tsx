@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/Components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatCompact, formatCurrency } from "../utils/format";
 import type { MonthRevenue } from "@/features/Order/api/chartData";
 

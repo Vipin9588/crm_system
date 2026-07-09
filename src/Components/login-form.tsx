@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 import {
   Card,
@@ -7,14 +7,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card";
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/Components/ui/field";
-import { Input } from "@/Components/ui/input";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { checkNewOrOldUser } from "@/services/authService";

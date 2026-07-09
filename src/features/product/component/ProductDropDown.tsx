@@ -9,8 +9,8 @@ import {
 } from "@/hooks/use-file-upload"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/Components/ui/button"
-import { Spinner } from "@/Components/ui/spinner"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { ImageIcon, UploadIcon, XIcon, ZoomInIcon } from 'lucide-react'
 import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider"
 

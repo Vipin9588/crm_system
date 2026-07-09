@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/Components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "../utils/format";
 import type { TopProduct } from "../api/getSalesData";
 

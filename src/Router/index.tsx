@@ -1,8 +1,8 @@
-import Login from "@/Components/Auth/Login";
-import Signup from "@/Components/Auth/SignUp";
+import Login from "@/components/Auth/Login";
+import Signup from "@/components/Auth/SignUp";
 import { createBrowserRouter } from "react-router";
 import ProtectedRoute from "./protectedRoute";
-import Home from "@/Components/pages/Home";
+import Home from "@/components/pages/Home";
 import ProductPage from "@/features/product/index";
 import ProductAddForm from "@/features/product/component/ProductAddForm";
 import ProductDetails from "@/features/product/component/productdetails";

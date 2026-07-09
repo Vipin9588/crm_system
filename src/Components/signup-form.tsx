@@ -1,30 +1,30 @@
 import { useAuth } from "@/Context/Authcontext/AuthProvider"
-import { Button } from "@/Components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card"
+} from "@/components/ui/card"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/Components/ui/field";
-import { Input } from "@/Components/ui/input";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addUser } from '@/services/authService';
 import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
-import { getAdditionalUserInfo } from "firebase/auth"
+
 type signupType = {
   email: string;
   password: string;
   confirmPassword: string;
 }
-let timeOut: ReturnType<typeof setTimeout>;
+
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const { signUp, googleSignIn } = useAuth()
   const { toastMessage } = useNotify()
@@ -34,41 +34,47 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     password: "",
     confirmPassword: ""
   })
-  const userId = `user_${Date.now()}`
+
   const handleSignup = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("verification function")
     const { password, confirmPassword, email } = signUpInput;
-    if (email !== "" && confirmPassword !== "" && email !== "") {
+
+    if (email !== "" && password !== "" && confirmPassword !== "") {
       if (password.trim() !== confirmPassword.trim()) {
         toastMessage("confirm password should same", "error")
+        return;
       }
-      else {
 
-        try {
-          let credential = await signUp(email, confirmPassword);
-          await addUser({ userId, email, createdAt: Date.now().toString() }, toastMessage, credential);
-          setSignupInput({
-            email: "",
-            password: "",
-            confirmPassword: ""
-          })
-        } catch (error) {
-          throw error
-        }
+      try {
+        const userId = `user_${Date.now()}`
+        const credential = await signUp(email, password);
 
+        await addUser(
+          { userId, email, createdAt: Date.now().toString() },
+          toastMessage,
+          credential
+        );
+
+        toastMessage("signup successfully", "success");
+        navigate("/");
+
+        setSignupInput({
+          email: "",
+          password: "",
+          confirmPassword: ""
+        })
+      } catch (error) {
+        console.error(error);
+        toastMessage("signup failed", "error");
       }
-    }
-    else {
+    } else {
       toastMessage("please Enter the details", "info")
     }
   }
 
-
   const handleGoogleSignup = async () => {
     try {
       const credential = await googleSignIn();
-
       const user = credential.user;
 
       await addUser(
@@ -85,8 +91,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       navigate("/");
     } catch (error) {
       console.error(error);
+      toastMessage("google signup failed", "error");
     }
   };
+
   return (
     <Card {...props}>
       <CardHeader>
@@ -106,7 +114,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 placeholder="m@example.com"
                 required
                 value={signUpInput.email}
-                onChange={(e) => (setSignupInput({ ...signUpInput, email: e.target.value }))}
+                onChange={(e) => setSignupInput({ ...signUpInput, email: e.target.value })}
               />
               <FieldDescription>
                 We&apos;ll use this to contact you. We will not share your email
@@ -115,9 +123,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" required
+              <Input
+                id="password"
+                type="password"
+                required
                 value={signUpInput.password}
-                onChange={(e) => { setSignupInput({ ...signUpInput, password: e.target.value }) }}
+                onChange={(e) => setSignupInput({ ...signUpInput, password: e.target.value })}
               />
               <FieldDescription>
                 Must be at least 8 characters long.
@@ -127,22 +138,25 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <FieldLabel htmlFor="confirm-password">
                 Confirm Password
               </FieldLabel>
-              <Input id="confirm-password" type="password" required
+              <Input
+                id="confirm-password"
+                type="password"
+                required
                 value={signUpInput.confirmPassword}
-                onChange={(e) => {
-                  setSignupInput({ ...signUpInput, confirmPassword: e.target.value })
-                }}
+                onChange={(e) => setSignupInput({ ...signUpInput, confirmPassword: e.target.value })}
               />
             </Field>
             <FieldGroup>
               <Field>
-
-                <Button type="submit" onClick={(e) => handleSignup(e)}>Create Account</Button>
+                <Button type="submit" onClick={handleSignup}>Create Account</Button>
                 <Button variant="outline" type="button" onClick={handleGoogleSignup}>
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a onClick={() => { navigate("/login") }} className="cursor-pointer">Sign in</a>
+                  Already have an account?{" "}
+                  <a onClick={() => navigate("/login")} className="cursor-pointer">
+                    Sign in
+                  </a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

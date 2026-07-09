@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { NavMain } from "@/Components/nav-main"
-import { NavUser } from "@/Components/nav-user"
+import { NavMain } from "@/components/nav-main"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/Components/ui/sidebar"
+} from "@/components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, Box ,ShoppingCart , UsersIcon, BadgeIndianRupee , Settings2Icon, CircleHelpIcon, SearchIcon, CommandIcon } from "lucide-react"
 import { useAuth } from "@/Context/Authcontext/AuthProvider";
 

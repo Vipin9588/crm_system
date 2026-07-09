@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Customer } from "./types";
 import Cards from "./components/Cards";
-import { DataTable } from "@/Components/table/data-table";
+import { DataTable } from "@/components/table/data-table";
 import { getColumns } from "./components/column";
 import CustomerSummary from "./components/CustomerSummary";
 import { IoIosAdd } from "react-icons/io";

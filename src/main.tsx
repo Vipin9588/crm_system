@@ -5,9 +5,9 @@ import AuthProvider from './Context/Authcontext/AuthProvider'
 import { RouterProvider } from "react-router-dom";
 import router from './Router';
 import { Toaster } from 'sonner';
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotifyContextProvider from '@/Context/NotifyContext/NotifyContextProvider';
-import { ThemeProvider } from '@/Context/ThemeContext/ThemeContext';
+import { TooltipProvider } from "./components/ui/tooltip";
+import NotifyContextProvider from './Context/NotifyContext/NotifyContextProvider';
+import { ThemeProvider } from './Context/ThemeContext/ThemeContext';
 
 
 

@@ -1,6 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
+=======
+import { Button } from "../../../Components/ui/button";
+>>>>>>> 72bc422 (fixing imports)
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,7 +12,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../../../Components/ui/dropdown-menu";
 import type { productDatatype } from "../productStructer";
 
 type ColumnActions = {

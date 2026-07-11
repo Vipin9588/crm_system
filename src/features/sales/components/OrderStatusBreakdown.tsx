@@ -1,8 +1,8 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { StatusSlice } from "@/features/Order/api/chartData";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../Components/ui/card";
+import type { StatusSlice } from "../../Order/api/chartData";
 
 const STATUS_COLORS: Record<string, string> = {
   Pending: "var(--chart-3)",

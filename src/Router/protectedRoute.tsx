@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "../Context/Authcontext/AuthProvider";
+import { Spinner } from "../Components/ui/spinner";
 import React from "react";
 
 

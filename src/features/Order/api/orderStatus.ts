@@ -1,4 +1,4 @@
-import countDoc from "@/services/countDoc";
+import countDoc from "../../../services/countDoc";
 
 export interface OrderItem {
   name: string;

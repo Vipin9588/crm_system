@@ -1,5 +1,5 @@
-import type { productDatatype } from "@/features/product/productStructer";
-import { checkStatus } from "@/features/product/api/getProducts";
+import type { productDatatype } from "../../product/productStructer";
+import { checkStatus } from "../../product/api/getProducts";
 
 type Props = {
   products: productDatatype[];

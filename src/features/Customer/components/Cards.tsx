@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, type ComponentType } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../../Components/ui/badge";
 import {
   Card,
   CardAction,
@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../../Components/ui/card";
 import { Users, UserCheck, UserX } from "lucide-react";
 import type { Customer } from "../types";
 

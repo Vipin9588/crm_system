@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import type { Order } from "@/features/Order/api/orderStatus";
+import type { Order } from "../../Order/api/orderStatus";
 export interface OrderObject {
   orderId: string;
   customer: string;

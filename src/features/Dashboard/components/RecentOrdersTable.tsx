@@ -1,4 +1,4 @@
-import type { Order } from "@/features/Order/api/orderStatus";
+import type { Order } from "../../Order/api/orderStatus";
 
 type Props = {
   orders: Order[];

@@ -1,16 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
-import orderStatus, { type OrderStatus, type OrderItem } from "@/features/Order/api/orderStatus";
-import { deleteOrder } from "@/features/Order/api/orderService";
-import Cards from "@/features/Order/components/Cards";
-import OrderListCard, { type OrderObject } from "@/features/Order/components/OrderListCard";
-import OrderSummaryCard from "@/features/Order/components/OrderSummaryCard";
-import ReusablePieChart from "@/features/Order/components/ReusablePieChart";
-import ReusableBarChart from "@/features/Order/components/ReusableBarChart";
-import { toStatusSlices, toMonthlyRevenue } from "@/features/Order/api/chartData";
+import { useAuth } from "../../Context/Authcontext/AuthProvider";
+import { useNotify } from "../../Context/NotifyContext/NotifyContextProvider";
+import orderStatus, { type OrderStatus, type OrderItem } from "../Order/api/orderStatus";
+import { deleteOrder } from "../Order/api/orderService";
+import Cards from "../Order/components/Cards";
+import OrderListCard, { type OrderObject } from "../Order/components/OrderListCard";
+import OrderSummaryCard from "../Order/components/OrderSummaryCard";
+import ReusablePieChart from "../Order/components/ReusablePieChart";
+import ReusableBarChart from "../Order/components/ReusableBarChart";
+import { toStatusSlices, toMonthlyRevenue } from "../Order/api/chartData";
 
 const EMPTY_STATUS: OrderStatus = {
   pending: 0,

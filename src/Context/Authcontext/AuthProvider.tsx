@@ -13,7 +13,7 @@ import {
   getAdditionalUserInfo,
 } from "firebase/auth";
 
-import { auth } from "@/config/firebase";
+import { auth } from "../../config/firebase";
 
 type Props = {
   children: React.ReactNode;

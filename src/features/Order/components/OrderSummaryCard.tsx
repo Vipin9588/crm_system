@@ -1,5 +1,5 @@
 import type { OrderObject } from "./OrderListCard";
-import type { OrderItem } from "@/features/Order/api/orderStatus";
+import type { OrderItem } from "../../Order/api/orderStatus";
 
 type OrderProps = {
   showSummary: OrderObject | null;

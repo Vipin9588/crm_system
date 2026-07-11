@@ -1,13 +1,10 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
-import { SiteHeader } from "@/components/site-header"
-import { useAuth } from "@/Context/Authcontext/AuthProvider"
+import { AppSidebar } from "../app-sidebar"
+import { SiteHeader } from "../site-header"
+import { useAuth } from "../../Context/Authcontext/AuthProvider"
 import {
     SidebarInset,
     SidebarProvider,
-} from "@/components/ui/sidebar"
+} from "../../Components/ui/sidebar"
 
 import { Outlet } from "react-router-dom"
 

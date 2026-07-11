@@ -5,10 +5,10 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+} from "../../../Components/ui/table";
+import { Card, CardHeader, CardTitle, CardContent } from "../../../Components/ui/card";
 import { formatCurrency } from "../utils/format";
-import type { Order } from "@/features/Order/api/orderStatus";
+import type { Order } from "../../Order/api/orderStatus";
 
 const STATUS_STYLES: Record<Order["status"], string> = {
   pending: "bg-warning/15 text-warning",

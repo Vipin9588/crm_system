@@ -1,11 +1,11 @@
-import countDoc from "@/services/countDoc";
-import type { Order } from "@/features/Order/api/orderStatus";
+import countDoc from "../../../services/countDoc";
+import type { Order } from "../../Order/api/orderStatus";
 import {
   toStatusSlices,
   toMonthlyRevenue,
   type StatusSlice,
   type MonthRevenue,
-} from "@/features/Order/api/chartData";
+} from "../../Order/api/chartData";
 
 export interface TopProduct {
   productId: string;

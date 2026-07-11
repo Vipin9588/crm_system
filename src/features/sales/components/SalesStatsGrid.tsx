@@ -1,5 +1,5 @@
 import { IndianRupee, TrendingUp, TrendingDown, Wallet,Package  } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../../../Components/ui/card";
 import { formatCurrency } from "../utils/format";
 import type { SalesData } from "../api/getSalesData";
 

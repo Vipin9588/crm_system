@@ -2,10 +2,10 @@ import { useState, useRef, useCallback, useMemo, useEffect, memo } from "react";
 import { useFormik } from "formik";
 import { UserCircle2, Upload, X, Plus, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-import { uploadImageToCloudinary } from "@/services/cloudnairy";
-import { AddToCollection } from "@/services/userService";
-import { getCustomerById, updateCustomer } from "@/features/Customer/api/customerService";
+import { useAuth } from "../../../Context/Authcontext/AuthProvider";
+import { uploadImageToCloudinary } from "../../../services/cloudnairy";
+import { AddToCollection } from "../../../services/userService";
+import { getCustomerById, updateCustomer } from "../api/customerService";
 import type { Customer } from "../types";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB

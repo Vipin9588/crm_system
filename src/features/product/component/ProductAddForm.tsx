@@ -3,17 +3,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Category, { searchCategory } from './Category';
 import DynamicField from "../Dynamic-form/DynamicField";
-import { categoryConfigs } from "@/config/categoryConfigs"
-import { productCategories } from "@/config/categoryConfigs";
+import { categoryConfigs } from "../../../config/categoryConfigs"
+import { productCategories } from "../../../config/categoryConfigs";
 import { useFormik } from "formik";
 import { productDatatype } from "../productStructer";
-import { uploadImageToCloudinary } from "@/services/cloudnairy";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-import { AddToCollection } from "@/services/userService";
-import { updateProductInCollection } from "@/services/update";
+import { uploadImageToCloudinary } from "../../../services/cloudnairy";
+import { useAuth } from "../../../Context/Authcontext/AuthProvider";
+import { AddToCollection } from "../../../services/userService";
+import { updateProductInCollection } from "../../../services/update";
 import getProductById from "../api/getProductById";
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
-import type { FileMetadata } from "@/hooks/use-file-upload";
+import { useNotify } from "../../../Context/NotifyContext/NotifyContextProvider";
+import type { FileMetadata } from "../../../hooks/use-file-upload";
 
 
 type ImageItem = { file: File; preview?: string } | string;

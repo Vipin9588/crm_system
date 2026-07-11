@@ -1,22 +1,24 @@
-import Login from "@/components/Auth/Login";
-import Signup from "@/components/Auth/SignUp";
-import { createBrowserRouter } from "react-router";
+
+import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./protectedRoute";
-import Home from "@/components/pages/Home";
-import ProductPage from "@/features/product/index";
-import ProductAddForm from "@/features/product/component/ProductAddForm";
-import ProductDetails from "@/features/product/component/productdetails";
-import OrderPage from "@/features/Order/index";
-import CustomerPage from "@/features/Customer";
-import CustomerForm from "@/features/Customer/components/NewCustomer";
-import OrderForm from "@/features/Order/components/OrderForm";
-import Dashboard from "@/features/Dashboard";
-import SalesPage from "@/features/sales";
+import Home from "../Components/pages/Home";
+import Dashboard from "../features/Dashboard";
+import ProductPage from "../features/product";
+import ProductAddForm from "../features/product/component/ProductAddForm";
+import ProductDetails from "../features/product/component/productdetails";
+import CustomerPage from "../features/Customer";
+import CustomerForm from "../features/Customer/components/NewCustomer";
+import OrderForm from "../features/Order/components/OrderForm";
+import SalesPage from "../features/sales";
+import Signup from "../Components/Auth/SignUp";
+import Login from "../Components/Auth/Login";
+import OrderPage from "../features/Order/index";
+
 const router = createBrowserRouter([
     {
         path: "/",
         element: <ProtectedRoute>
-                <Home />
+                <Home/>
           </ProtectedRoute>
         ,
         children: [
@@ -70,7 +72,7 @@ const router = createBrowserRouter([
     ,
     {
         index: true,
-        element: <Signup />,
+        element: <Signup/>,
     },
     {
         path: "/login",

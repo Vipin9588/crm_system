@@ -1,7 +1,7 @@
 import type { UserCredential } from "firebase/auth";
 import { getAdditionalUserInfo, deleteUser } from "firebase/auth";
 import { doc, setDoc, getDocs, collection } from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { db } from "../config/firebase";
 //check New or old user after google sign in and get the user info
 type MessageType = (message: string, type: "success" | "error" | "info") => void
 

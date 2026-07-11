@@ -1,24 +1,24 @@
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { cn } from "../lib/utils";
+import { Button } from "../Components/ui/button";
+import { useAuth } from "../Context/Authcontext/AuthProvider";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../Components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+} from "../Components/ui/field";
+import { Input } from "../Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { checkNewOrOldUser } from "@/services/authService";
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
+import { checkNewOrOldUser } from "../services/authService";
+import { useNotify } from "../Context/NotifyContext/NotifyContextProvider";
 type formInputType = {
   email: string;
   password: string;

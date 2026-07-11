@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "./nav-main"
+import { NavUser } from "./nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -10,10 +10,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "../Components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, Box ,ShoppingCart , UsersIcon, BadgeIndianRupee , Settings2Icon, CircleHelpIcon, SearchIcon, CommandIcon } from "lucide-react"
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-
+import { useAuth } from "../Context/Authcontext/AuthProvider";
+ import { useNavigate } from "react-router-dom"
 const data = {
 
   navMain: [
@@ -91,6 +91,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { logout ,user} = useAuth();
+  const  navigate = useNavigate();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -100,8 +101,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a>
-                <CommandIcon className="size-6! text-primary" />
+              <a onClick={()=>navigate('/')}>
+                <CommandIcon className="size-5!" />
                 <span className="text-lg font-semibold">FlowWork</span>
               </a>
             </SidebarMenuButton>

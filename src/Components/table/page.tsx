@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 const statuses = ["pending", "processing", "success", "failed"] as const;
 
 async function getData(): Promise<Payment[]> {
-    // Fetch data from your API here.
     return Array.from({ length: 50 }, (_, index) => ({
         id: `728ed52f-${index + 1}`,
         amount: 100 + index * 25,

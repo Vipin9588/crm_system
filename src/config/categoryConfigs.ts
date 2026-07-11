@@ -1,4 +1,4 @@
-import { FormField } from "@/features/product/Dynamic-form/form";
+import { FormField } from "../features/product/Dynamic-form/form";
 
 
 export const productCategories: string[] = [

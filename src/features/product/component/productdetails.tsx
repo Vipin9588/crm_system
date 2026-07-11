@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import getProductById from "../api/getProductById";
 import { checkStatus } from "../api/getProducts";
 import type { productDatatype } from "../productStructer";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { useAuth } from "../../../Context/Authcontext/AuthProvider";
 
 export default function ProductDetails() {
     const { id } = useParams();

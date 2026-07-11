@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, type ComponentType } from "react";
+<<<<<<< HEAD
 import { Badge } from "@/components/ui/badge";
+=======
+import { Badge } from "../../../Components/ui/badge";
+>>>>>>> 72bc422 (fixing imports)
 import {
   Card,
   CardAction,
@@ -9,7 +13,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+<<<<<<< HEAD
 } from "@/components/ui/card";
+=======
+} from "../../../Components/ui/card";
+>>>>>>> 72bc422 (fixing imports)
 import { Package, Boxes, AlertTriangle, TrendingUp, TrendingDown } from "lucide-react";
 
 export interface OrderItem {

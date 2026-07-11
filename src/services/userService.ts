@@ -1,5 +1,5 @@
 import { addDoc, collection,doc, updateDoc ,deleteDoc,DocumentData} from "firebase/firestore";
-import { db } from "@/config/firebase";
+import { db } from "../config/firebase";
 
 
 export interface Product {

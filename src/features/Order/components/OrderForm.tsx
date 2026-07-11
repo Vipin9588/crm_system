@@ -14,12 +14,12 @@ import {
   Check,
   ShoppingCart,
 } from "lucide-react";
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
-import { AddToCollection } from "@/services/userService";
-import countDoc from "@/services/countDoc";
-import { getOrderById, updateOrder } from "@/features/Order/api/orderService";
-import type { Order } from "@/features/Order/api/orderStatus";
+import { useNotify } from "../../../Context/NotifyContext/NotifyContextProvider";
+import { useAuth } from "../../../Context/Authcontext/AuthProvider";
+import { AddToCollection } from "../../../services/userService";
+import countDoc from "../../../services/countDoc";
+import { getOrderById, updateOrder } from "../../Order/api/orderService";
+import type { Order } from "../../Order/api/orderStatus";
 
 interface Customer {
   id: string;

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import type { Customer } from "./types";
 import Cards from "./components/Cards";
-import { DataTable } from "@/components/table/data-table";
+import { DataTable } from "../../Components/table/data-table";
 import { getColumns } from "./components/column";
 import CustomerSummary from "./components/CustomerSummary";
 import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { useAuth } from "../../Context/Authcontext/AuthProvider";
 import { getCustomerStaus } from "./api/getCustomers";
-import { deleteCustomer } from "@/features/Customer/api/customerService";
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
+import { deleteCustomer } from "./api/customerService";
+import { useNotify } from "../../Context/NotifyContext/NotifyContextProvider";
 import { Plus } from 'lucide-react';
 
 export default function CustomerPage() {

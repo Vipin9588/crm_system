@@ -1,5 +1,5 @@
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "../Components/ui/separator";
+import { SidebarTrigger } from "../Components/ui/sidebar";
 import { useLocation } from "react-router-dom";
 
 export function SiteHeader() {
@@ -15,7 +15,7 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-lg font-md">
+        <h1 className="text-lg">
           {pageName.charAt(0).toUpperCase() + pageName.slice(1)}
         </h1>
       </div>

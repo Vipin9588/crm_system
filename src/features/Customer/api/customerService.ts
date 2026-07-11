@@ -1,4 +1,4 @@
- import { db } from "@/config/firebase"; 
+ import { db } from "../../../config/firebase"; 
 import {
   collection,
   query,
@@ -7,7 +7,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import type { Customer } from "@/features/Customer/types";
+import type { Customer } from "../types";
 
 async function findCustomerDoc(userId: string, customerId: string) {
   const q = query(

@@ -1,5 +1,5 @@
 import type { Customer } from "../types";
-import countDoc from "@/services/countDoc";
+import countDoc from "../../../services/countDoc";
 
 export const getCustomerStaus = async (userId: string): Promise<Customer[]> => {
   try {

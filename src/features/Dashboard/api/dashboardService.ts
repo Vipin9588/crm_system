@@ -1,16 +1,16 @@
 
 import getProductstatus, {
   type Status as ProductStatus,
-} from "@/features/product/api/getStatus";
-import { getCustomerStaus } from "@/features/Customer/api/getCustomers";
-import countDoc from "@/services/countDoc";
-import type { Order } from "@/features/Order/api/orderStatus";
+} from "../../product/api/getStatus";
+import { getCustomerStaus } from "../../Customer/api/getCustomers";
+import countDoc from "../../../services/countDoc";
+import type { Order } from "../../Order/api/orderStatus";
 import {
   toStatusSlices,
   toMonthlyRevenue,
   type StatusSlice,
   type MonthRevenue,
-} from "@/features/Order/api/chartData";
+} from "../../Order/api/chartData";
 
 export interface DashboardData {
   productStatus: ProductStatus;

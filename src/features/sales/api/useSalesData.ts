@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSalesData, type SalesData } from "@/features/sales/api/getSalesData";
+import { getSalesData, type SalesData } from "../api/getSalesData";
 
 const emptySalesData: SalesData = {
   totalRevenue: 0,

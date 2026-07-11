@@ -1,24 +1,24 @@
-import { useAuth } from "@/Context/Authcontext/AuthProvider"
-import { Button } from "@/components/ui/button"
+import { useAuth } from "../Context/Authcontext/AuthProvider"
+import { Button } from "../Components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "../Components/ui/card"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+} from "../Components/ui/field";
+import { Input } from "../Components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addUser } from '@/services/authService';
-import { useNotify } from "@/Context/NotifyContext/NotifyContextProvider";
-
+import { addUser } from '../services/authService';
+import { useNotify } from "../Context/NotifyContext/NotifyContextProvider";
+import { getAdditionalUserInfo } from "firebase/auth"
 type signupType = {
   email: string;
   password: string;

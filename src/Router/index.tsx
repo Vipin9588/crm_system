@@ -11,7 +11,7 @@ import CustomerForm from "../features/Customer/components/NewCustomer";
 import OrderForm from "../features/Order/components/OrderForm";
 import SalesPage from "../features/sales";
 import Signup from "../Components/Auth/SignUp";
-import Login from "../Components/Auth/Login";
+import Login from "../components/Auth/Login";
 import OrderPage from "../features/Order/index";
 
 const router = createBrowserRouter([

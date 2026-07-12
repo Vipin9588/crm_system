@@ -22,14 +22,12 @@ const deleteProduct = async (
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            console.log("Product not found or unauthorized.");
             return false;
         }
 
         const productDoc = querySnapshot.docs[0];
         await deleteDoc(productDoc.ref);
 
-        console.log("Product deleted successfully:", productId);
 
         return true;
     } catch (error) {

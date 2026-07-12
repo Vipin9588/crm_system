@@ -15,7 +15,6 @@ const getProducts = async (userId: string): Promise<productDatatype[]> => {
             ...doc.data(),
         })) as productDatatype[];
 
-        console.log(products)
 
         return products;
     } catch (error) {

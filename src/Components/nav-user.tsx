@@ -127,7 +127,6 @@ export function NavUser({ user, logout }: Props) {
 
             <DropdownMenuItem
               onClick={async () => {
-                console.log("Logout clicked");
                 await logout();
               }}
             >

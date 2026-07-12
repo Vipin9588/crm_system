@@ -1,10 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-<<<<<<< HEAD
-import { Button } from "@/components/ui/button";
-=======
 import { Button } from "../../../Components/ui/button";
->>>>>>> 72bc422 (fixing imports)
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -93,7 +89,6 @@ export const getColumns = ({ onView, onEdit, onDelete }: ColumnActions): ColumnD
                         </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => {onView(product);
-                            console.log("View details clicked for product:", product)
                         }}>
                             View Details
                         </DropdownMenuItem>

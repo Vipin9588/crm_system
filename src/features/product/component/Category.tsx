@@ -46,7 +46,6 @@ export const searchCategory = (e: React.ChangeEvent<HTMLInputElement>, allList: 
         })
         setCategoryList(list);
     }, 100)
-    console.log("serach element ", searched)
 
 
 }

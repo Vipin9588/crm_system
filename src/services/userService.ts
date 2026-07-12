@@ -43,7 +43,6 @@ export async function editProduct(
 
     await updateDoc(productRef, updatedData);
 
-    console.log("Product updated successfully");
   } catch (error) {
     console.error(error);
     throw error;
@@ -56,7 +55,6 @@ export async function deleteProduct(productId: string) {
 
     await deleteDoc(productRef);
 
-    console.log("Product deleted successfully");
   } catch (error) {
     console.error("Error deleting product:", error);
     throw error;

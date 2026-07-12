@@ -25,7 +25,6 @@ const getProductById = async (
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      console.log("Product not found");
       return null;
     }
 
@@ -37,7 +36,6 @@ const getProductById = async (
       firestoreId: productDoc.id,
     };
 
-    console.log("Product:", product);
 
     return product;
   } catch (error) {

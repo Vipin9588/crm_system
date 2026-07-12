@@ -39,7 +39,6 @@ export const checkNewOrOldUser = async ({ credential, toastMessage }: userInfoTy
 export const addUser = async (user: userScheme, toastMessage: MessageType,credential:UserCredential) => {
    let result = await setDoc(doc(db, "Users",credential.user.uid ), user);
    toastMessage("signup successfull", "success")
-   console.log("result is stored in the firestore = ", result);
 }
 
 

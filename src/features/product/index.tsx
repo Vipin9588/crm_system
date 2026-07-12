@@ -29,7 +29,6 @@ export default function ProductPage() {
         if (!user) return
         try {
             const s = await getProductStats(user?.uid);
-            console.log(s)
             if (s === undefined) return;
             setStatus(s);
         } catch (error) {

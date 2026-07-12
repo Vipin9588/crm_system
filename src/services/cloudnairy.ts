@@ -3,7 +3,6 @@ export const uploadImageToCloudinary = async (
 ): Promise<string> => {
     try {
         const formData = new FormData();
-        console.log
         formData.append("file", file);
         formData.append(
             "upload_preset",

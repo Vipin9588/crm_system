@@ -23,7 +23,6 @@ export default function ProductDetails() {
 
                 const data = await getProductById(id, user.uid);
 
-                console.log("Fetched Product:", data);
 
                 setProduct(data);
             } catch (error) {

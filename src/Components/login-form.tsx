@@ -51,7 +51,6 @@ export function LoginForm({
   const loginWithEP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = await login(formInput.email, formInput.password);
-    console.log("this is the login result", result);
     setFormInput({ email: "", password: "" });
     navigate("/");
   };

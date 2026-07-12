@@ -1,11 +1,11 @@
-import { Button } from "../Components/ui/button"
+import { Button } from "./ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../Components/ui/sidebar"
+} from "./ui/sidebar"
 import { CirclePlusIcon, MailIcon } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 export function NavMain({

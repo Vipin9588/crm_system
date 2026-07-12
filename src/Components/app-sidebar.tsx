@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../Components/ui/sidebar"
+} from "./ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, Box ,ShoppingCart , UsersIcon, BadgeIndianRupee , Settings2Icon, CircleHelpIcon, SearchIcon, CommandIcon } from "lucide-react"
 import { useAuth } from "../Context/Authcontext/AuthProvider";
  import { useNavigate } from "react-router-dom"

@@ -4,7 +4,7 @@ import { useAuth } from "../../Context/Authcontext/AuthProvider"
 import {
     SidebarInset,
     SidebarProvider,
-} from "../../Components/ui/sidebar"
+} from "../ui/sidebar"
 
 import { Outlet } from "react-router-dom"
 

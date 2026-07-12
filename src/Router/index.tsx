@@ -1,7 +1,7 @@
 
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./protectedRoute";
-import Home from "../Components/pages/Home";
+import Home from "../components/pages/Home";
 import Dashboard from "../features/Dashboard";
 import ProductPage from "../features/product";
 import ProductAddForm from "../features/product/component/ProductAddForm";
@@ -10,7 +10,7 @@ import CustomerPage from "../features/Customer";
 import CustomerForm from "../features/Customer/components/NewCustomer";
 import OrderForm from "../features/Order/components/OrderForm";
 import SalesPage from "../features/sales";
-import Signup from "../Components/Auth/SignUp";
+import Signup from "../components/Auth/SignUp";
 import Login from "../components/Auth/Login";
 import OrderPage from "../features/Order/index";
 

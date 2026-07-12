@@ -1,10 +1,10 @@
 import { ProductCards } from '../product/component/ProductsCards'
-import CustomPieChart from '../../Components/chart/PieChart'
-import ReusableLineChart from '../../Components/chart/AreaChart'
+import CustomPieChart from '../../components/chart/PieChart'
+import ReusableLineChart from '../../components/chart/AreaChart'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/Authcontext/AuthProvider';
-import { DataTable } from '../../Components/table/data-table';
+import { DataTable } from '../../components/table/data-table';
 import { getColumns } from './component/columns';
 import getProductStats, { Status } from './api/getStatus';
 import { useNotify } from '../../Context/NotifyContext/NotifyContextProvider';

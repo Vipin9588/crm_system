@@ -21,9 +21,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "../../Components/ui/table"
-import { Button } from "../../Components/ui/button"
-import { Input } from "../../Components/ui/input"
+} from "../ui/table"
+import { Button } from "../ui/button"
+import { Input } from "../ui/input"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]

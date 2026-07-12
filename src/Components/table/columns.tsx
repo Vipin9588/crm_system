@@ -11,7 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "../../Components/ui/dropdown-menu"
+} from "../ui/dropdown-menu"
 export type Payment = {
     id: string
     amount: number

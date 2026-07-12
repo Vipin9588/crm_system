@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Customer } from "../types";
-import { Button } from "../../../Components/ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../../Components/ui/dropdown-menu";
+} from "../../../components/ui/dropdown-menu";
 
 function formatDate(iso: string): string {
   const d = new Date(iso);

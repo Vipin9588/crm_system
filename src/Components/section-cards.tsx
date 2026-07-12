@@ -1,6 +1,6 @@
 "use client"
 
-import { Badge } from "./ui/badge"
+import { Badge } from "../components/ui/badge"
 import {
   Card,
   CardAction,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card"
+} from "../components/ui/card"
 import { TrendingUpIcon, TrendingDownIcon } from "lucide-react"
 
 export function SectionCards() {

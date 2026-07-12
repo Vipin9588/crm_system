@@ -38,15 +38,15 @@ import { toast } from "sonner"
 import { z } from "zod"
 
 import { useIsMobile } from "../hooks/use-mobile"
-import { Badge } from "./ui/badge"
-import { Button } from "./ui/button"
+import { Badge } from "../components/ui/badge"
+import { Button } from "../components/ui/button"
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "./ui/chart"
-import { Checkbox } from "./ui/checkbox"
+} from "../components/ui/chart"
+import { Checkbox } from "../components/ui/checkbox"
 import {
   Drawer,
   DrawerClose,
@@ -56,7 +56,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "./ui/drawer"
+} from "../components/ui/drawer"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -64,9 +64,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+} from "../components/ui/dropdown-menu"
+import { Input } from "../components/ui/input"
+import { Label } from "../components/ui/label"
 import {
   Select,
   SelectContent,
@@ -74,8 +74,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select"
-import { Separator } from "./ui/separator"
+} from "../components/ui/select"
+import { Separator } from "../components/ui/separator"
 import {
   Table,
   TableBody,
@@ -83,13 +83,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table"
+} from "../components/ui/table"
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "./ui/tabs"
+} from "../components/ui/tabs"
 import { GripVerticalIcon, CircleCheckIcon, LoaderIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon, TrendingUpIcon } from "lucide-react"
 
 export const schema = z.object({

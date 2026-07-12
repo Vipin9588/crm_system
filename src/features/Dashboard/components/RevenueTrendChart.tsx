@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
-import type { MonthRevenue } from "@/features/Order/api/chartData";
+import type { MonthRevenue } from "../../Order/api/chartData";
 
 type Props = {
   data: MonthRevenue[];

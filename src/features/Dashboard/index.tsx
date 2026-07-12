@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/Context/Authcontext/AuthProvider";
+import { useAuth } from "../../Context/Authcontext/AuthProvider";
 import { getDashboardData, type DashboardData } from "./api/dashboardService";
-import { checkStatus } from "@/features/product/api/getProducts";
+import { checkStatus } from "../product/api/getProducts";
 
 import StatCard from "./components/StatCard";
 import DashboardSkeleton from "./components/Dashboardskeleton";
@@ -9,8 +9,8 @@ import RevenueTrendChart from "./components/RevenueTrendChart";
 import RecentOrdersTable from "./components/RecentOrdersTable";
 import LowStockTable from "./components/LowStockTable";
 
-import ReusableLineChart from "@/components/chart/AreaChart";
-import CustomPieChart from "@/components/chart/PieChart";
+import ReusableLineChart from "../../components/chart/AreaChart";
+import CustomPieChart from "../../components/chart/PieChart";
 import { IndianRupee ,ScrollText,PackageSearch ,Users   } from 'lucide-react';
 
 export default function Dashboard() {

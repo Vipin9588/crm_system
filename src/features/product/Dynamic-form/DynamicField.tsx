@@ -32,7 +32,7 @@ export default function DynamicField({
             return (
                 <MultiChoiceField
                     formik={formik}
-                    name={field.id}
+                    name={field.id as never }
                     label={field.label}
                     options={field.options || []}
                 />

@@ -1,19 +1,19 @@
 import { useAuth } from "../Context/Authcontext/AuthProvider"
-import { Button } from "./ui/button"
+import { Button } from "../components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card"
+} from "../components/ui/card"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "./ui/field";
-import { Input } from "./ui/input";
+} from "../components/ui/field";
+import { Input } from "../components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addUser } from '../services/authService';
